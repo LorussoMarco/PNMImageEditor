@@ -1,7 +1,7 @@
-package ch.supsi.os.backend;
+package ch.supsi.os;
 
 public class BackendController {
     public String hello(){
-        return "cioa";
+        return "cuao";
     }
 }
