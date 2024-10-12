@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+
+<MenuBar fx:id="menuBar" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml">
+    <Menu fx:id="menuFile" text="File">
+        <MenuItem fx:id="menuItemNew" text="New"/>
+        <MenuItem fx:id="menuItemOpen" text="Open"/>
+        <MenuItem fx:id="menuItemExport" text="Export"/>
+    </Menu>
+    <Menu fx:id="menuEdit" text="Edit">
+        <MenuItem fx:id="menuItemPreferences" text="Preferences"/>
+    </Menu>
+    <Menu fx:id="menuHelp" text="Help">
+        <MenuItem fx:id="menuItemAbout" text="About"/>
+    </Menu>
+</MenuBar>
