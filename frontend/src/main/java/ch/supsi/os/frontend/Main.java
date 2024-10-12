@@ -1,10 +1,9 @@
 package ch.supsi.os.frontend;
 
-import ch.supsi.os.backend.application.BackendController;
+import ch.supsi.os.backend.controller.BackendController;
 
 public class Main {
     public static void main(String[] args) {
-        BackendController bc = new BackendController();
-        System.out.println(bc.hello());
+        MainFx.main(args);
     }
 }

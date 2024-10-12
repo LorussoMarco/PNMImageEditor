@@ -1,4 +1,4 @@
-package ch.supsi.os.backend.application;
+package ch.supsi.os.backend.controller;
 
 public class BackendController {
     public String hello(){

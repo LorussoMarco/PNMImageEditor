@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.ImageView?>
+
+<BorderPane fx:id="imageBorderPane" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml">
+
+    <center>
+        <ImageView fx:id="imageView" fitWidth="500" fitHeight="500" preserveRatio="true" />
+    </center>
+
+</BorderPane>
