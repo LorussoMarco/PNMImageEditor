@@ -18,6 +18,29 @@ public class ImageModel {
     public ImageModel() {
     }
 
+    public void setMagicNumber(String magicNumber) {
+        this.magicNumber = magicNumber;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public void setPixels(int[][] pixels) {
+        this.pixels = pixels;
+    }
+
+    public int getChannels() {
+        return channels;
+    }
+
+    public void setChannels(int channels) {
+        this.channels = channels;
+    }
 
     @Override
     public String toString() {
