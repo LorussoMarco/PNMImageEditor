@@ -1,12 +1,13 @@
 package ch.supsi.os.frontend;
 
+import ch.supsi.os.frontend.controller.ImageEventHandler;
 import ch.supsi.os.frontend.view.*;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
-public class MainFx extends Application{
+public class MainFx extends Application {
     public static final String APPLICATION_TITLE = "2D Image Editor";
 
     private final ControlledFxView menuBarView;
@@ -29,6 +30,13 @@ public class MainFx extends Application{
         root.setCenter(this.imageView.getNode());
         root.setRight(this.pipelineView.getNode());
 
+        ImageEventHandler eventHandler = new ImageEventHandler(stage);
+
+        menuBarView.initialize(eventHandler);
+        imageView.initialize(eventHandler);
+        transformationsView.initialize(eventHandler);
+        pipelineView.initialize(eventHandler);
+
         Scene scene = new Scene(root);
 
         stage.setTitle(APPLICATION_TITLE);
@@ -38,7 +46,6 @@ public class MainFx extends Application{
         stage.setScene(scene);
         stage.show();
     }
-
 
     public static void main(String[] args) {
         launch(args);

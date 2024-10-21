@@ -55,7 +55,7 @@ public class ImageModel {
         String output = "";
         for(int i = 0; i < pixels.length; i++){
             for(int j = 0; j < pixels[i].length; j++){
-               output = output + " " +  pixels[i][j];
+                output = output + " " +  pixels[i][j];
             }
             output += "\n";
         }
