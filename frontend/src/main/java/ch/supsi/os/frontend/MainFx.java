@@ -40,7 +40,7 @@ public class MainFx extends Application {
         Scene scene = new Scene(root);
 
         stage.setTitle(APPLICATION_TITLE);
-        stage.setResizable(false);
+        stage.setResizable(true);
 
         stage.toFront();
         stage.setScene(scene);
