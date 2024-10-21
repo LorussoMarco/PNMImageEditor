@@ -1,6 +1,5 @@
-package ch.supsi.os.backend.controller;
+package ch.supsi.os.backend.application;
 
-import ch.supsi.os.backend.controller.ImageController;
 import ch.supsi.os.backend.model.ImageModel;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,6 +1,7 @@
 package ch.supsi.os.frontend.view;
 
 import ch.supsi.os.frontend.controller.EventHandler;
+import ch.supsi.os.frontend.controller.ImageEventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -76,6 +77,7 @@ public class MenuBarViewFxml implements ControlledFxView {
 
     @Override
     public void initialize(EventHandler eventHandler) {
-
+        ImageEventHandler handler = (ImageEventHandler) eventHandler;
+        menuItemOpen.setOnAction(e -> handler.handleOpenMenuItem());
     }
 }
