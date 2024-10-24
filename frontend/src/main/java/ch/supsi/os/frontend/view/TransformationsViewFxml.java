@@ -1,5 +1,7 @@
 package ch.supsi.os.frontend.view;
 
+import ch.supsi.os.backend.application.ImageController;
+import ch.supsi.os.backend.model.ImageModel;
 import ch.supsi.os.frontend.controller.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -53,6 +55,8 @@ public class TransformationsViewFxml implements ControlledFxView {
         return myself;
     }
 
+
+
     @Override
     public void update() {
     }
@@ -64,6 +68,15 @@ public class TransformationsViewFxml implements ControlledFxView {
 
     @Override
     public void initialize(EventHandler eventHandler) {
-
+        bFlipUpDown.setOnAction(e -> {
+            ImageModel imageModel = ImageController.getInstance().getImageModel();
+            if (imageModel != null) {
+                imageModel.flipImageUpsideDown();
+                ImageViewFxml imageViewFxml = ImageViewFxml.getInstance();
+                imageViewFxml.drawImage(imageModel);
+            } else {
+                System.out.println("No image loaded to flip.");
+            }
+        });
     }
 }

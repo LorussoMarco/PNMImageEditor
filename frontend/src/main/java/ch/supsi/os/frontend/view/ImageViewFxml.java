@@ -86,9 +86,6 @@ public class ImageViewFxml implements ControlledFxView {
         }
     }
 
-
-
-
     @Override
     public Node getNode() {
         return imageBorderPane;
