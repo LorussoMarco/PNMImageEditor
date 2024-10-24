@@ -77,4 +77,17 @@ public class ImageModel {
     public int[][] getPixels() {
         return pixels;
     }
+
+    /**
+     * Flips the image upside down by reversing the order of the rows in the pixel array.
+     * It creates a new array where the first row becomes the last, the second row becomes the second-to-last, and so on.
+     * The flipped array replaces the original pixel data.
+     */
+    public void flipImageUpsideDown() {
+        int[][] flippedPixels = new int[height][width * channels];
+        for (int i = 0; i < height; i++) {
+            flippedPixels[i] = pixels[height - 1 - i];
+        }
+        pixels = flippedPixels;
+    }
 }

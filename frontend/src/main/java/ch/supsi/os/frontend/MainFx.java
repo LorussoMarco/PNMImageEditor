@@ -41,7 +41,8 @@ public class MainFx extends Application {
 
         stage.setTitle(APPLICATION_TITLE);
         stage.setResizable(true);
-
+        stage.setMinWidth(500);
+        stage.setMinHeight(500);
         stage.toFront();
         stage.setScene(scene);
         stage.show();

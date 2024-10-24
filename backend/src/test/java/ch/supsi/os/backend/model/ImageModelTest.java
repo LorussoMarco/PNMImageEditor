@@ -69,4 +69,22 @@ public class ImageModelTest {
         String expectedPixels = " 0 128 255\n 255 64 32\n";
         assertEquals(expectedPixels, model.toString().split("pixels=\n")[1]); // We just want to test pixel formatting here
     }
+
+    @Test
+    public void testFlipImageUpsideDown() {
+        int[][] originalPixels = {
+                {1, 2, 3},
+                {4, 5, 6},
+                {7, 8, 9}
+        };
+
+        ImageModel imageModel = new ImageModel("P2", 3, 3, originalPixels, 1);
+        imageModel.flipImageUpsideDown();
+        int[][] expectedPixels = {
+                {7, 8, 9},
+                {4, 5, 6},
+                {1, 2, 3}
+        };
+        assertArrayEquals(expectedPixels, imageModel.getPixels(), "The image should be flipped upside down");
+    }
 }
