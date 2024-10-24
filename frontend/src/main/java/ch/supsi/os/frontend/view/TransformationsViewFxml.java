@@ -78,5 +78,15 @@ public class TransformationsViewFxml implements ControlledFxView {
                 System.out.println("No image loaded to flip.");
             }
         });
+        bFlipSide.setOnAction(e -> {
+            ImageModel imageModel = ImageController.getInstance().getImageModel();
+            if (imageModel != null) {
+                imageModel.flipImageSideToSide();
+                ImageViewFxml imageViewFxml = ImageViewFxml.getInstance();
+                imageViewFxml.drawImage(imageModel);
+            } else {
+                System.out.println("No image loaded to flip.");
+            }
+        });
     }
 }

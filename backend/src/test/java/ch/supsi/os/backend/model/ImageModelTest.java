@@ -87,4 +87,23 @@ public class ImageModelTest {
         };
         assertArrayEquals(expectedPixels, imageModel.getPixels(), "The image should be flipped upside down");
     }
+
+    @Test
+    public void testFlipImageSideToSideForRGB() {
+        int[][] originalPixels = {
+                {0, 4, 170, 0, 255, 0, 0, 0, 255},
+                {255, 255, 0, 30, 24, 96, 0, 0, 0}
+        };
+
+        ImageModel imageModel = new ImageModel("P3", 3, 2, originalPixels, 3);
+
+        imageModel.flipImageSideToSide();
+
+        int[][] expectedPixels = {
+                {0, 0, 255, 0, 255, 0, 0, 4, 170},
+                {0, 0, 0, 30, 24, 96, 255, 255, 0}
+        };
+
+        assertArrayEquals(expectedPixels, imageModel.getPixels(), "The RGB image should be flipped side-to-side");
+    }
 }
