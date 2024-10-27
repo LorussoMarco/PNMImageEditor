@@ -1,5 +1,7 @@
 package ch.supsi.os.backend.model;
 
+import static java.lang.Math.round;
+
 public class ImageModel {
     private String magicNumber;
     private int width;
@@ -167,7 +169,34 @@ public class ImageModel {
     }
 
 
+    public void negativeTransformation() {
+        // Loop through each pixel in the image
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                if (channels == 3) { // For RGB images
+                    int index = j * 3; // Calculate index for RGB channels
 
+                    // Calculate grayscale value using the Y formula
+                    int grayValue = (int) round(
+                            0.299 * pixels[i][index] +
+                                    0.587 * pixels[i][index + 1] +
+                                    0.114 * pixels[i][index + 2]
+                    );
+
+                    // Apply negative transformation to the RGB values
+                    pixels[i][index] = 255 - pixels[i][index];       // Red channel
+                    pixels[i][index + 1] = 255 - pixels[i][index + 1]; // Green channel
+                    pixels[i][index + 2] = 255 - pixels[i][index + 2]; // Blue channel
+
+                    // Optionally, if you want to set the grayscale value in the first channel
+                    // pixels[i][index] = grayValue; // Uncomment if desired
+                } else { // For grayscale images
+                    // Apply negative transformation to grayscale values
+                    pixels[i][j] = 255 - pixels[i][j]; // Assuming pixel values are in range 0-255
+                }
+            }
+        }
+    }
 
 
 }

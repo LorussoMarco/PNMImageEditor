@@ -110,5 +110,16 @@ public class TransformationsViewFxml implements ControlledFxView {
                 System.out.println("No image loaded to rotate.");
             }
         });
+
+        bNegative.setOnAction(e -> {
+            ImageModel imageModel = ImageController.getInstance().getImageModel();
+            if (imageModel != null) {
+                imageModel.negativeTransformation();
+                ImageViewFxml imageViewFxml = ImageViewFxml.getInstance();
+                imageViewFxml.drawImage(imageModel);
+            } else {
+                System.out.println("No image loaded to make negative.");
+            }
+        });
     }
 }
