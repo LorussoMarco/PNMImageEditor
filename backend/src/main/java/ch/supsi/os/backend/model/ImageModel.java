@@ -111,4 +111,29 @@ public class ImageModel {
         }
     }
 
+    public void rotate90Clockwise() {
+        int newWidth = height;
+        int newHeight = width;
+        int[][] rotatedPixels = new int[newHeight][newWidth * channels];
+
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                if (channels == 3) {
+                    // Handle RGB channels separately
+                    int sourceIndex = j * 3;
+                    int destinationIndex = (newWidth - 1 - i) * 3;
+                    rotatedPixels[j][destinationIndex] = pixels[i][sourceIndex];
+                    rotatedPixels[j][destinationIndex + 1] = pixels[i][sourceIndex + 1];
+                    rotatedPixels[j][destinationIndex + 2] = pixels[i][sourceIndex + 2];
+                } else {
+                    rotatedPixels[j][newWidth - 1 - i] = pixels[i][j];
+                }
+            }
+        }
+
+        this.width = newWidth;
+        this.height = newHeight;
+        this.pixels = rotatedPixels;
+    }
+
 }
