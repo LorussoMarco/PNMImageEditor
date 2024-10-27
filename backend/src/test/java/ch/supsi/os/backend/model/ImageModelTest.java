@@ -148,4 +148,47 @@ public class ImageModelTest {
         assertArrayEquals(expectedPixels, imageModel.getPixels(), "The RGB image should be rotated 90 degrees clockwise");
     }
 
+    @Test
+    public void testRotate90AntiClockwise() {
+        int[][] originalPixels = {
+                {1, 2, 3},
+                {4, 5, 6}
+        };
+
+        ImageModel imageModel = new ImageModel("P2", 3, 2, originalPixels, 1);
+        imageModel.rotate90AntiClockwise();
+
+        int[][] expectedPixels = {
+                {3, 6},
+                {2, 5},
+                {1, 4}
+        };
+
+        assertEquals(2, imageModel.getWidth(), "The new width should match the original height");
+        assertEquals(3, imageModel.getHeight(), "The new height should match the original width");
+        assertArrayEquals(expectedPixels, imageModel.getPixels(), "The image should be rotated 90 degrees anti-clockwise");
+    }
+
+    @Test
+    public void testRotate90AntiClockwiseForRGB() {
+        int[][] originalPixels = {
+                {0, 4, 170, 0, 255, 0},
+                {255, 255, 0, 30, 24, 96}
+        };
+
+        ImageModel imageModel = new ImageModel("P3", 2, 2, originalPixels, 3);
+        imageModel.rotate90AntiClockwise();
+
+        int[][] expectedPixels = {
+                {0, 255, 0, 30, 24, 96},  // Rotated row 0
+                {0, 4, 170, 255, 255, 0}    // Rotated row 1
+        };
+
+        assertEquals(2, imageModel.getWidth(), "The new width should match the original height");
+        assertEquals(2, imageModel.getHeight(), "The new height should match the original width");
+        assertArrayEquals(expectedPixels, imageModel.getPixels(), "The RGB image should be rotated 90 degrees anti-clockwise");
+    }
+
+
+
 }

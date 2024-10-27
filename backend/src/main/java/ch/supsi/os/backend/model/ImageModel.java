@@ -136,4 +136,38 @@ public class ImageModel {
         this.pixels = rotatedPixels;
     }
 
+    public void rotate90AntiClockwise() {
+        int newWidth = height;
+        int newHeight = width;
+        int[][] rotatedPixels = new int[newHeight][newWidth * channels];
+
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                if (channels == 3) {
+                    // Calculate correct indices for RGB channels
+                    int sourceIndex = j * 3;
+                    int destinationRow = width - 1 - j;
+                    int destinationIndex = i * 3;
+
+                    // Copy RGB values from the source pixel to the correct rotated position
+                    rotatedPixels[destinationRow][destinationIndex] = pixels[i][sourceIndex];
+                    rotatedPixels[destinationRow][destinationIndex + 1] = pixels[i][sourceIndex + 1];
+                    rotatedPixels[destinationRow][destinationIndex + 2] = pixels[i][sourceIndex + 2];
+                } else {
+                    // If it's not an RGB image, handle as a single-channel grayscale image
+                    rotatedPixels[width - 1 - j][i] = pixels[i][j];
+                }
+            }
+        }
+
+        // Update the image dimensions and pixels
+        this.width = newWidth;
+        this.height = newHeight;
+        this.pixels = rotatedPixels;
+    }
+
+
+
+
+
 }
