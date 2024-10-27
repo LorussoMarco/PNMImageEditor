@@ -106,4 +106,46 @@ public class ImageModelTest {
 
         assertArrayEquals(expectedPixels, imageModel.getPixels(), "The RGB image should be flipped side-to-side");
     }
+
+    @Test
+    public void testRotate90DegreesClockwise() {
+        int[][] originalPixels = {
+                {1, 2, 3},
+                {4, 5, 6}
+        };
+
+        ImageModel imageModel = new ImageModel("P2", 3, 2, originalPixels, 1);
+        imageModel.rotate90Clockwise();
+
+        int[][] expectedPixels = {
+                {4, 1},
+                {5, 2},
+                {6, 3}
+        };
+
+        assertEquals(2, imageModel.getWidth(), "The new width should match the original height");
+        assertEquals(3, imageModel.getHeight(), "The new height should match the original width");
+        assertArrayEquals(expectedPixels, imageModel.getPixels(), "The image should be rotated 90 degrees clockwise");
+    }
+
+    @Test
+    public void testRotate90DegreesClockwiseForRGB() {
+        int[][] originalPixels = {
+                {0, 4, 170, 0, 255, 0}, // Pixel (0, 0): [0, 4, 170], Pixel (0, 1): [0, 255, 0]
+                {255, 255, 0, 30, 24, 96}  // Pixel (1, 0): [255, 255, 0], Pixel (1, 1): [30, 24, 96]
+        };
+
+        ImageModel imageModel = new ImageModel("P3", 2, 2, originalPixels, 3);
+        imageModel.rotate90Clockwise();
+
+        int[][] expectedPixels = {
+                {255, 255, 0, 0, 4, 170},  // Pixel (0, 0): [255, 255, 0], Pixel (0, 1): [0, 4, 170]
+                {30, 24, 96, 0, 255, 0}  // Pixel (1, 0): [30, 24, 96], Pixel (1, 1): [0, 255, 0]
+        };
+
+        assertEquals(2, imageModel.getWidth(), "The new width should match the original height");
+        assertEquals(2, imageModel.getHeight(), "The new height should match the original width");
+        assertArrayEquals(expectedPixels, imageModel.getPixels(), "The RGB image should be rotated 90 degrees clockwise");
+    }
+
 }
