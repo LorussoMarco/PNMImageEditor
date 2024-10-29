@@ -30,13 +30,13 @@ public class MenuBarViewFxml implements ControlledFxView {
     private Menu menuHelp;
 
     @FXML
-    private MenuItem menuItemNew;
-
-    @FXML
     private MenuItem menuItemOpen;
 
     @FXML
     private MenuItem menuItemExport;
+
+    @FXML
+    private MenuItem menuItemSaveAs;
 
     @FXML
     private MenuItem menuItemPreferences;

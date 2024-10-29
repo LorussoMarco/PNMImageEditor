@@ -1,6 +1,5 @@
-package ch.supsi.os.backend.model;
+package ch.supsi.os.backend.business;
 
-import ch.supsi.os.backend.model.ImageModel;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
