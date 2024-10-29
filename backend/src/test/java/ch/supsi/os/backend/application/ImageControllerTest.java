@@ -126,6 +126,6 @@ public class ImageControllerTest {
                 controller.loadImageFromFile(tempFile.getAbsolutePath())
         );
 
-        assertEquals("Unsupported format: P5", exception.getMessage());
+        assertEquals("Unsupported image format", exception.getMessage());
     }
 }
