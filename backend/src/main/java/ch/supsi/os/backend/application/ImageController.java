@@ -1,54 +1,47 @@
 package ch.supsi.os.backend.application;
 
-import ch.supsi.os.backend.dataAccess.PNMImageReader;
-import ch.supsi.os.backend.model.ImageModel;
+import ch.supsi.os.backend.dataAccess.PbmHandler;
+import ch.supsi.os.backend.dataAccess.PgmHandler;
+import ch.supsi.os.backend.dataAccess.PpmHandler;
+import ch.supsi.os.backend.business.ImageModel;
+import ch.supsi.os.backend.dataAccess.ImageHandler;
 
 import java.io.IOException;
 
 public class ImageController {
 
-    private static ImageController myself;
-    private static ImageModel imageModel;
+    private static ImageController instance;
+    private ImageModel imageModel;
+    private ImageHandler handlerChain;
 
-    private ImageController() {}
+    private ImageController() {
+        this.imageModel = new ImageModel();
+        initializeChain();
+    }
 
     public static ImageController getInstance() {
-        if (myself == null) {
-            myself = new ImageController();
+        if (instance == null) {
+            instance = new ImageController();
         }
-        return myself;
+        return instance;
+    }
+
+    private void initializeChain() {
+        // Create individual handlers
+        ImageHandler pbmHandler = new PbmHandler();
+        ImageHandler pgmHandler = new PgmHandler();
+        ImageHandler ppmHandler = new PpmHandler();
+
+        // Set up the chain
+        pbmHandler.setNextHandler(pgmHandler);
+        pgmHandler.setNextHandler(ppmHandler);
+
+        this.handlerChain = pbmHandler; // Start of the chain
     }
 
     public void loadImageFromFile(String filePath) throws IOException {
-        PNMImageReader reader = new PNMImageReader(filePath);
-        String magicNumber = reader.getMagicNumber();
-        int[] dimensions = reader.getDimensions();
-        int maxGrayValue = reader.getMaxGrayValue(magicNumber);
-
-        int width = dimensions[0];
-        int height = dimensions[1];
-
-        int channels = 1;
-        switch (magicNumber) {
-            case "P1":
-                channels = 1;
-                break;
-            case "P2":
-                channels = 1;
-                break;
-            case "P3":
-                channels = 3;
-                width *= 3;
-                break;
-            default:
-                throw new IllegalArgumentException("Unsupported format: " + magicNumber);
-        }
-
-        int[][] pixels = reader.readPixels(magicNumber, width / channels, height, maxGrayValue);
-
-        reader.close();
-
-        imageModel = new ImageModel(magicNumber, width / channels, height, pixels, channels);
+        // Delegate to chain
+        handlerChain.handle(filePath, imageModel);
     }
 
     public ImageModel getImageModel() {

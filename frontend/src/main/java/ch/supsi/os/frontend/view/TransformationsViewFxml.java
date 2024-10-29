@@ -1,12 +1,11 @@
 package ch.supsi.os.frontend.view;
 
 import ch.supsi.os.backend.application.ImageController;
-import ch.supsi.os.backend.model.ImageModel;
+import ch.supsi.os.backend.business.*;
 import ch.supsi.os.frontend.controller.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.Button;
 
@@ -68,58 +67,24 @@ public class TransformationsViewFxml implements ControlledFxView {
 
     @Override
     public void initialize(EventHandler eventHandler) {
-        bFlipUpDown.setOnAction(e -> {
-            ImageModel imageModel = ImageController.getInstance().getImageModel();
-            if (imageModel != null) {
-                imageModel.flipImageUpsideDown();
-                ImageViewFxml imageViewFxml = ImageViewFxml.getInstance();
-                imageViewFxml.drawImage(imageModel);
-            } else {
-                System.out.println("No image loaded to flip.");
-            }
-        });
-        bFlipSide.setOnAction(e -> {
-            ImageModel imageModel = ImageController.getInstance().getImageModel();
-            if (imageModel != null) {
-                imageModel.flipImageSideToSide();
-                ImageViewFxml imageViewFxml = ImageViewFxml.getInstance();
-                imageViewFxml.drawImage(imageModel);
-            } else {
-                System.out.println("No image loaded to flip.");
-            }
-        });
+        ImageViewFxml imageViewFxml = ImageViewFxml.getInstance();
+        ImageController imageController = ImageController.getInstance();
 
-        bRotateC.setOnAction(e -> {
-            ImageModel imageModel = ImageController.getInstance().getImageModel();
-            if (imageModel != null) {
-                imageModel.rotate90Clockwise();
-                ImageViewFxml imageViewFxml = ImageViewFxml.getInstance();
-                imageViewFxml.drawImage(imageModel);
-            } else {
-                System.out.println("No image loaded to rotate.");
-            }
-        });
-
-        bRotateAC.setOnAction(e -> {
-            ImageModel imageModel = ImageController.getInstance().getImageModel();
-            if (imageModel != null) {
-                imageModel.rotate90AntiClockwise();
-                ImageViewFxml imageViewFxml = ImageViewFxml.getInstance();
-                imageViewFxml.drawImage(imageModel);
-            } else {
-                System.out.println("No image loaded to rotate.");
-            }
-        });
-
-        bNegative.setOnAction(e -> {
-            ImageModel imageModel = ImageController.getInstance().getImageModel();
-            if (imageModel != null) {
-                imageModel.negativeTransformation();
-                ImageViewFxml imageViewFxml = ImageViewFxml.getInstance();
-                imageViewFxml.drawImage(imageModel);
-            } else {
-                System.out.println("No image loaded to make negative.");
-            }
-        });
+        bFlipUpDown.setOnAction(e -> applyTransformation(new FlipUpsideDownTransformation(), imageController, imageViewFxml));
+        bFlipSide.setOnAction(e -> applyTransformation(new FlipSideToSideTransformation(), imageController, imageViewFxml));
+        bRotateC.setOnAction(e -> applyTransformation(new Rotate90ClockwiseTransformation(), imageController, imageViewFxml));
+        bRotateAC.setOnAction(e -> applyTransformation(new Rotate90AntiClockwiseTransformation(), imageController, imageViewFxml));
+        bNegative.setOnAction(e -> applyTransformation(new NegativeTransformation(), imageController, imageViewFxml));
     }
+
+    private void applyTransformation(ImageTransformationStrategy strategy, ImageController imageController, ImageViewFxml imageViewFxml) {
+        ImageModel imageModel = imageController.getImageModel();
+        if (imageModel != null) {
+            strategy.applyTransformation(imageModel);
+            imageViewFxml.drawImage(imageModel);
+        } else {
+            System.out.println("No image loaded for transformation.");
+        }
+    }
+
 }

@@ -1,6 +1,6 @@
 package ch.supsi.os.backend.application;
 
-import ch.supsi.os.backend.model.ImageModel;
+import ch.supsi.os.backend.business.ImageModel;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -126,6 +126,6 @@ public class ImageControllerTest {
                 controller.loadImageFromFile(tempFile.getAbsolutePath())
         );
 
-        assertEquals("Unsupported format: P5", exception.getMessage());
+        assertEquals("Unsupported image format", exception.getMessage());
     }
 }

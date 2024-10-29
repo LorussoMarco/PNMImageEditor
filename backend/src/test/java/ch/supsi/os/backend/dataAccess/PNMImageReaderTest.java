@@ -3,7 +3,7 @@ package ch.supsi.os.backend.dataAccess;
 import static org.junit.jupiter.api.Assertions.*;
 
 import ch.supsi.os.backend.application.ImageController;
-import ch.supsi.os.backend.model.ImageModel;
+import ch.supsi.os.backend.business.ImageModel;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

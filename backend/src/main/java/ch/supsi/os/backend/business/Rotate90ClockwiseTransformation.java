@@ -1,0 +1,31 @@
+package ch.supsi.os.backend.business;
+
+public class Rotate90ClockwiseTransformation implements ImageTransformationStrategy {
+
+    @Override
+    public void applyTransformation(ImageModel imageModel) {
+        int newWidth = imageModel.getHeight();
+        int newHeight = imageModel.getWidth();
+        int channels = imageModel.getChannels();
+        int[][] rotatedPixels = new int[newHeight][newWidth * channels];
+
+        int[][] pixels = imageModel.getPixels();
+        for (int i = 0; i < imageModel.getHeight(); i++) {
+            for (int j = 0; j < imageModel.getWidth(); j++) {
+                if (channels == 3) {
+                    int sourceIndex = j * 3;
+                    int destinationIndex = (newWidth - 1 - i) * 3;
+                    rotatedPixels[j][destinationIndex] = pixels[i][sourceIndex];
+                    rotatedPixels[j][destinationIndex + 1] = pixels[i][sourceIndex + 1];
+                    rotatedPixels[j][destinationIndex + 2] = pixels[i][sourceIndex + 2];
+                } else {
+                    rotatedPixels[j][newWidth - 1 - i] = pixels[i][j];
+                }
+            }
+        }
+
+        imageModel.setWidth(newWidth);
+        imageModel.setHeight(newHeight);
+        imageModel.setPixels(rotatedPixels);
+    }
+}

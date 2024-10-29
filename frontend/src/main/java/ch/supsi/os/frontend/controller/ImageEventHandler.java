@@ -1,7 +1,7 @@
 package ch.supsi.os.frontend.controller;
 
 import ch.supsi.os.backend.application.ImageController;
-import ch.supsi.os.backend.model.ImageModel;
+import ch.supsi.os.backend.business.ImageModel;
 import ch.supsi.os.frontend.view.ImageViewFxml;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;

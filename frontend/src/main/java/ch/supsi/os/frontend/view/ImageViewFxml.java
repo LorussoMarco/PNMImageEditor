@@ -1,19 +1,16 @@
 package ch.supsi.os.frontend.view;
 
-import ch.supsi.os.backend.model.ImageModel;
+import ch.supsi.os.backend.business.ImageModel;
 import ch.supsi.os.frontend.controller.EventHandler;
-import ch.supsi.os.frontend.controller.ImageEventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
@@ -22,7 +19,7 @@ public class ImageViewFxml implements ControlledFxView {
     private static ImageViewFxml myself;
 
     @FXML
-    private Canvas imageView;
+    private ImageView imageView;
 
     @FXML
     private BorderPane imageBorderPane;
@@ -31,15 +28,17 @@ public class ImageViewFxml implements ControlledFxView {
         if (myself == null) {
             myself = new ImageViewFxml();
 
-            try{
-                URL fxmlUrl = TransformationsViewFxml.class.getResource("/imageview.fxml");
-                if(fxmlUrl != null){
+            try {
+                URL fxmlUrl = ImageViewFxml.class.getResource("/imageview.fxml");
+                if (fxmlUrl != null) {
                     FXMLLoader fxmlLoader = new FXMLLoader(fxmlUrl);
                     fxmlLoader.setController(myself);
                     fxmlLoader.load();
+                } else {
+                    throw new RuntimeException("FXML file 'imageview.fxml' not found");
                 }
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException("Failed to load FXML file 'imageview.fxml'", e);
             }
         }
         return myself;
@@ -47,44 +46,40 @@ public class ImageViewFxml implements ControlledFxView {
 
     private ImageViewFxml() {}
 
-    /**
-     * Renders the image on the Canvas using pixel data from the ImageModel.
-     * Supports both grayscale and RGB images. Colors are set based on the
-     * number of channels, and the image is scaled to fit the Canvas.
-     */
     public void drawImage(ImageModel imageModel) {
+        // Convert pixel data from ImageModel to a WritableImage for display
+        WritableImage writableImage = createWritableImageFromModel(imageModel);
+        imageView.setImage(writableImage);
+    }
+
+    private WritableImage createWritableImageFromModel(ImageModel imageModel) {
         int width = imageModel.getWidth();
         int height = imageModel.getHeight();
         int[][] pixels = imageModel.getPixels();
-        int channels = imageModel.getChannels();
+        int channels = imageModel.getChannels(); // Check for grayscale or RGB
+        WritableImage writableImage = new WritableImage(width, height);
 
-        GraphicsContext gc = imageView.getGraphicsContext2D();
-        gc.clearRect(0, 0, imageView.getWidth(), imageView.getHeight());
-
-        double scaleX = imageView.getWidth() / width;
-        double scaleY = imageView.getHeight() / height;
-        double scale = Math.min(scaleX, scaleY);
-
+        PixelWriter pixelWriter = writableImage.getPixelWriter();
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                if (channels == 3) {
+                if (channels == 3) { // Color image (RGB)
                     int index = x * 3;
                     int r = pixels[y][index];
                     int g = pixels[y][index + 1];
                     int b = pixels[y][index + 2];
-
                     Color color = Color.rgb(r, g, b);
-                    gc.setFill(color);
-                } else {
+                    pixelWriter.setColor(x, y, color);
+                } else { // Grayscale image
                     int gray = pixels[y][x];
                     Color color = Color.grayRgb(gray);
-                    gc.setFill(color);
+                    pixelWriter.setColor(x, y, color);
                 }
-
-                gc.fillRect(x * scale, y * scale, scale, scale);
             }
         }
+
+        return writableImage;
     }
+
 
     @Override
     public Node getNode() {
