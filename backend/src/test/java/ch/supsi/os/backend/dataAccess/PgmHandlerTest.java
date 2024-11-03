@@ -4,9 +4,7 @@ import ch.supsi.os.backend.business.ImageModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -81,4 +79,39 @@ class PgmHandlerTest {
         }
         return tempFile;
     }
+
+    @Test
+    void testSave() throws IOException {
+        // Set up an ImageModel with known values
+        imageModel.setMagicNumber("P2");
+        imageModel.setWidth(3);
+        imageModel.setHeight(3);
+        imageModel.setChannels(1);
+        imageModel.setPixels(new int[][] {
+                {100, 150, 200},
+                {0, 50, 100},
+                {200, 250, 0}
+        });
+
+        // Create a temporary file to save the image
+        File tempFile = File.createTempFile("testSave", ".pgm");
+        pgmHandler.save(tempFile.getPath(), imageModel);
+
+        // Read the saved file and verify its contents
+        try (BufferedReader reader = new BufferedReader(new FileReader(tempFile))) {
+            assertEquals("P2", reader.readLine().trim());  // Magic number
+            assertEquals("# Created by PgmSaveHandler", reader.readLine().trim());  // Comment
+            assertEquals("3 3", reader.readLine().trim());  // Width and height
+            assertEquals("255", reader.readLine().trim());  // Max gray value
+
+            // Check pixel values line by line
+            assertEquals("100 150 200", reader.readLine().trim());
+            assertEquals("0 50 100", reader.readLine().trim());
+            assertEquals("200 250 0", reader.readLine().trim());
+        }
+
+        // Clean up
+        tempFile.delete();
+    }
+
 }

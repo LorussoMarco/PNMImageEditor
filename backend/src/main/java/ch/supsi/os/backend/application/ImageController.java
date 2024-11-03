@@ -66,11 +66,6 @@ public class ImageController {
         return pbmHandler; // Start of the chain
     }
 
-
-
-
-
-
     public ImageModel getImageModel() {
         return imageModel;
     }
