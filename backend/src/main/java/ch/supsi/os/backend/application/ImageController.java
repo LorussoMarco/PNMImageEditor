@@ -1,5 +1,4 @@
 package ch.supsi.os.backend.application;
-import javafx.stage.FileChooser;
 
 import ch.supsi.os.backend.dataAccess.PbmHandler;
 import ch.supsi.os.backend.dataAccess.PgmHandler;
@@ -7,7 +6,6 @@ import ch.supsi.os.backend.dataAccess.PpmHandler;
 import ch.supsi.os.backend.business.ImageModel;
 import ch.supsi.os.backend.dataAccess.ImageHandler;
 
-import java.io.File;
 import java.io.IOException;
 
 public class ImageController {
