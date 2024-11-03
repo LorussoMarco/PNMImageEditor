@@ -5,9 +5,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,7 +22,7 @@ class PpmHandlerTest {
         ppmHandler = new PpmHandler();
         imageModel = new ImageModel();
 
-        // Creiamo un file PPM di test temporaneo
+        // Create a temporary test PPM file
         tempFile = File.createTempFile("test", ".ppm");
         try (FileWriter writer = new FileWriter(tempFile)) {
             writer.write("P3\n");
@@ -36,7 +36,7 @@ class PpmHandlerTest {
 
     @AfterEach
     public void tearDown() {
-        tempFile.delete(); // Rimuovi il file temporaneo dopo ogni test
+        tempFile.delete(); // Delete the temporary file after each test
     }
 
     @Test
@@ -59,5 +59,50 @@ class PpmHandlerTest {
                 {128, 128, 128, 64, 64, 64, 32, 32, 32}
         };
         assertArrayEquals(expectedPixels, imageModel.getPixels(), "Pixels do not match expected values");
+    }
+
+    @Test
+    public void testSave() throws IOException {
+        // Set up the image model for saving
+        imageModel.setMagicNumber("P3");
+        imageModel.setWidth(3);
+        imageModel.setHeight(2);
+        imageModel.setChannels(3);
+        int[][] pixels = {
+                {255, 0, 0, 0, 255, 0, 0, 0, 255},
+                {128, 128, 128, 64, 64, 64, 32, 32, 32}
+        };
+        imageModel.setPixels(pixels);
+
+        // Create a temporary file to save the PPM data
+        File saveFile = File.createTempFile("test_save", ".ppm");
+        saveFile.deleteOnExit();
+
+        // Save the image model using the handler
+        ppmHandler.save(saveFile.getAbsolutePath(), imageModel);
+
+        // Verify the saved file content
+        List<String> lines = Files.readAllLines(saveFile.toPath());
+
+        assertEquals("P3", lines.get(0).trim(), "Magic number mismatch");
+        assertEquals("3 2", lines.get(1).trim(), "Dimensions mismatch");
+        assertEquals("255", lines.get(2).trim(), "Max color value mismatch");
+
+        String[] expectedPixelLines = {
+                "255 0 0 0 255 0 0 0 255",
+                "128 128 128 64 64 64 32 32 32"
+        };
+
+        for (int i = 0; i < expectedPixelLines.length; i++) {
+            assertEquals(expectedPixelLines[i], lines.get(i + 3).trim(), "Pixel row " + (i + 1) + " mismatch");
+        }
+    }
+
+    private File createTempPbmFile(String content) throws IOException {
+        File tempFile = File.createTempFile("test", ".pbm");
+        try (FileWriter writer = new FileWriter(tempFile)) {
+            writer.write(content);
+        }
+        return tempFile;
     }
 }

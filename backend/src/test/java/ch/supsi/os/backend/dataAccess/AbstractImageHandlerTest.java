@@ -71,5 +71,10 @@ class AbstractImageHandlerTest {
         protected void process(String filePath, ImageModel imageModel) {
             wasProcessed = true; // Mark as processed for test verification
         }
+
+        @Override
+        public void save(String filePath, ImageModel imageModel) throws IOException {
+
+        }
     }
 }

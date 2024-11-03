@@ -34,4 +34,21 @@ public class ImageEventHandler implements EventHandler {
             }
         }
     }
+
+    public void handleSaveMenuItem() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save Image");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PNM files", "*.pbm", "*.pgm", "*.ppm"));
+
+        File selectedFile = fileChooser.showSaveDialog(primaryStage);
+        if (selectedFile != null) {
+            try {
+                ImageController.getInstance().saveImageToFile(selectedFile.getAbsolutePath());
+                System.out.println("Image saved to " + selectedFile.getAbsolutePath());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }

@@ -5,10 +5,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -127,5 +124,33 @@ public class ImageControllerTest {
         );
 
         assertEquals("Unsupported image format", exception.getMessage());
+    }
+
+    @Test
+    public void testSaveImageToFile() throws IOException {
+        // Set up the ImageModel with known values for saving
+        ImageController controller = ImageController.getInstance();
+        ImageModel model = controller.getImageModel();
+        model.setMagicNumber("P2");
+        model.setWidth(3);
+        model.setHeight(2);
+        model.setChannels(1);
+        model.setPixels(new int[][]{
+                {255, 128, 0},
+                {64, 32, 16}
+        });
+
+        // Save the image model to a file
+        controller.saveImageToFile(tempFile.getAbsolutePath());
+
+        // Verify the contents of the saved file
+        try (BufferedReader reader = new BufferedReader(new FileReader(tempFile))) {
+            assertEquals("P2", reader.readLine().trim());  // Magic number
+            assertTrue(reader.readLine().startsWith("#")); // Comment line
+            assertEquals("3 2", reader.readLine().trim()); // Width and height
+            assertEquals("255", reader.readLine().trim()); // Max gray value
+            assertEquals("255 128 0", reader.readLine().trim());
+            assertEquals("64 32 16", reader.readLine().trim());
+        }
     }
 }

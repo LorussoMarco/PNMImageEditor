@@ -2,9 +2,7 @@ package ch.supsi.os.backend.dataAccess;
 
 import ch.supsi.os.backend.business.ImageModel;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 
 public class PbmHandler extends AbstractImageHandler {
 
@@ -51,4 +49,31 @@ public class PbmHandler extends AbstractImageHandler {
             imageModel.setPixels(pixels);
         }
     }
+
+    @Override
+    public void save(String filePath, ImageModel imageModel) throws IOException {
+        if (!"P1".equals(imageModel.getMagicNumber())) {
+            if (nextHandler != null) {
+                nextHandler.save(filePath, imageModel);
+            } else {
+                throw new IllegalArgumentException("No handler available for format: " + imageModel.getMagicNumber());
+            }
+            return;
+        }
+
+        // Proceed with saving in PBM format
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+            writer.write("P1\n");
+            writer.write(imageModel.getWidth() + " " + imageModel.getHeight() + "\n");
+
+            int[][] pixels = imageModel.getPixels();
+            for (int[] row : pixels) {
+                for (int pixel : row) {
+                    writer.write((pixel == 255 ? "1" : "0") + " ");
+                }
+                writer.newLine();
+            }
+        }
+    }
+
 }
