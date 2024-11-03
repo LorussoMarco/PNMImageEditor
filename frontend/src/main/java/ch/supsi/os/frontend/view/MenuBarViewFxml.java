@@ -79,5 +79,6 @@ public class MenuBarViewFxml implements ControlledFxView {
     public void initialize(EventHandler eventHandler) {
         ImageEventHandler handler = (ImageEventHandler) eventHandler;
         menuItemOpen.setOnAction(e -> handler.handleOpenMenuItem());
+        menuItemSaveAs.setOnAction(e -> handler.handleSaveMenuItem());
     }
 }

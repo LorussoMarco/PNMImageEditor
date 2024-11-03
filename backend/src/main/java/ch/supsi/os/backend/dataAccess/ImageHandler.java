@@ -7,4 +7,5 @@ import java.io.IOException;
 public interface ImageHandler {
     void setNextHandler(ImageHandler handler);
     void handle(String filePath, ImageModel imageModel) throws IOException;
+    void save(String filePath, ImageModel imageModel) throws IOException;
 }
