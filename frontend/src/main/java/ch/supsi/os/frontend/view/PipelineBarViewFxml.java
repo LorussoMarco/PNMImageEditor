@@ -1,5 +1,7 @@
 package ch.supsi.os.frontend.view;
 
+import ch.supsi.os.backend.application.ImageController;
+import ch.supsi.os.backend.business.ImageModel;
 import ch.supsi.os.frontend.controller.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -7,6 +9,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
+import ch.supsi.os.frontend.controller.TransformationPipelineController;
 
 import java.io.IOException;
 import java.net.URL;
@@ -53,11 +56,35 @@ public class PipelineBarViewFxml implements ControlledFxView {
 
     @Override
     public void initialize(EventHandler eventHandler) {
+        TransformationPipelineController pipelineController = TransformationPipelineController.getInstance();
+        ImageController imageController = ImageController.getInstance();
+        ImageViewFxml imageViewFxml = ImageViewFxml.getInstance();
 
+        bApply.setOnAction(e -> {
+            ImageModel imageModel = imageController.getImageModel();
+            if (imageModel != null) {
+                pipelineController.applyPipeline(imageModel);
+                imageViewFxml.drawImage(imageModel);
+                pipelineTextArea.setText("Pipeline applied\n");
+            } else {
+                System.out.println("No image loaded to apply pipeline.");
+            }
+        });
+
+        bClear.setOnAction(e -> {
+            pipelineController.clearPipeline();
+            pipelineTextArea.clear();
+            System.out.println("Pipeline cleared.");
+        });
     }
 
     @Override
     public void update() {
 
+    }
+
+    public void updatePipelineTextArea() {
+        TransformationPipelineController pipelineController = TransformationPipelineController.getInstance();
+        pipelineTextArea.setText(pipelineController.getPipelineDescription());
     }
 }

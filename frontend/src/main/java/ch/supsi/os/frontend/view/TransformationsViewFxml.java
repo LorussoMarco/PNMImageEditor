@@ -3,6 +3,7 @@ package ch.supsi.os.frontend.view;
 import ch.supsi.os.backend.application.ImageController;
 import ch.supsi.os.backend.business.*;
 import ch.supsi.os.frontend.controller.EventHandler;
+import ch.supsi.os.frontend.controller.TransformationPipelineController;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -75,6 +76,19 @@ public class TransformationsViewFxml implements ControlledFxView {
         bRotateC.setOnAction(e -> applyTransformation(new Rotate90ClockwiseTransformation(), imageController, imageViewFxml));
         bRotateAC.setOnAction(e -> applyTransformation(new Rotate90AntiClockwiseTransformation(), imageController, imageViewFxml));
         bNegative.setOnAction(e -> applyTransformation(new NegativeTransformation(), imageController, imageViewFxml));
+
+        TransformationPipelineController pipelineController = TransformationPipelineController.getInstance();
+
+        bFlipUpDown.setOnAction(e -> addTransformationToPipeline(new FlipUpsideDownTransformation(), pipelineController));
+        bFlipSide.setOnAction(e -> addTransformationToPipeline(new FlipSideToSideTransformation(), pipelineController));
+        bRotateC.setOnAction(e -> addTransformationToPipeline(new Rotate90ClockwiseTransformation(), pipelineController));
+        bRotateAC.setOnAction(e -> addTransformationToPipeline(new Rotate90AntiClockwiseTransformation(), pipelineController));
+        bNegative.setOnAction(e -> addTransformationToPipeline(new NegativeTransformation(), pipelineController));
+    }
+
+    private void addTransformationToPipeline(ImageTransformationStrategy strategy, TransformationPipelineController pipelineController) {
+        pipelineController.addTransformation(strategy);
+        PipelineBarViewFxml.getInstance().updatePipelineTextArea();
     }
 
     private void applyTransformation(ImageTransformationStrategy strategy, ImageController imageController, ImageViewFxml imageViewFxml) {
