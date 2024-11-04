@@ -1,7 +1,5 @@
 package ch.supsi.os.backend.business;
 
-import static java.lang.Math.round;
-
 public class ImageModel {
     private String magicNumber;
     private int width;
