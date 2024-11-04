@@ -3,6 +3,7 @@ package ch.supsi.os.frontend.view;
 import ch.supsi.os.backend.application.ImageController;
 import ch.supsi.os.backend.business.*;
 import ch.supsi.os.frontend.controller.EventHandler;
+import ch.supsi.os.frontend.controller.ImageEventHandler;
 import ch.supsi.os.frontend.controller.TransformationPipelineController;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -71,6 +72,17 @@ public class TransformationsViewFxml implements ControlledFxView {
         ImageViewFxml imageViewFxml = ImageViewFxml.getInstance();
         ImageController imageController = ImageController.getInstance();
 
+        bFlipUpDown.setDisable(true);
+        bFlipSide.setDisable(true);
+        bRotateC.setDisable(true);
+        bRotateAC.setDisable(true);
+        bNegative.setDisable(true);
+
+        if (eventHandler instanceof ImageEventHandler) {
+            ImageEventHandler imageEventHandler = (ImageEventHandler) eventHandler;
+            imageEventHandler.setOnImageLoaded(this::enableButtons);
+        }
+
         bFlipUpDown.setOnAction(e -> applyTransformation(new FlipUpsideDownTransformation(), imageController, imageViewFxml));
         bFlipSide.setOnAction(e -> applyTransformation(new FlipSideToSideTransformation(), imageController, imageViewFxml));
         bRotateC.setOnAction(e -> applyTransformation(new Rotate90ClockwiseTransformation(), imageController, imageViewFxml));
@@ -86,9 +98,18 @@ public class TransformationsViewFxml implements ControlledFxView {
         bNegative.setOnAction(e -> addTransformationToPipeline(new NegativeTransformation(), pipelineController));
     }
 
+    private void enableButtons() {
+        bFlipUpDown.setDisable(false);
+        bFlipSide.setDisable(false);
+        bRotateC.setDisable(false);
+        bRotateAC.setDisable(false);
+        bNegative.setDisable(false);
+    }
+
     private void addTransformationToPipeline(ImageTransformationStrategy strategy, TransformationPipelineController pipelineController) {
         pipelineController.addTransformation(strategy);
         PipelineBarViewFxml.getInstance().updatePipelineTextArea();
+        LogBarViewFxml.getInstance().addLogEntry(strategy.getClass().getSimpleName() + " added to queue");
     }
 
     private void applyTransformation(ImageTransformationStrategy strategy, ImageController imageController, ImageViewFxml imageViewFxml) {
@@ -96,9 +117,9 @@ public class TransformationsViewFxml implements ControlledFxView {
         if (imageModel != null) {
             strategy.applyTransformation(imageModel);
             imageViewFxml.drawImage(imageModel);
+            LogBarViewFxml.getInstance().addLogEntry(strategy.getClass().getSimpleName() + " added to queue.");
         } else {
-            System.out.println("No image loaded for transformation.");
+            LogBarViewFxml.getInstance().addLogEntry("No image loaded to apply transformation.");
         }
     }
-
 }

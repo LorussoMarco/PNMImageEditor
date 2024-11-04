@@ -47,7 +47,6 @@ public class ImageViewFxml implements ControlledFxView {
     private ImageViewFxml() {}
 
     public void drawImage(ImageModel imageModel) {
-        // Convert pixel data from ImageModel to a WritableImage for display
         WritableImage writableImage = createWritableImageFromModel(imageModel);
         imageView.setImage(writableImage);
     }
@@ -55,6 +54,11 @@ public class ImageViewFxml implements ControlledFxView {
     private WritableImage createWritableImageFromModel(ImageModel imageModel) {
         int width = imageModel.getWidth();
         int height = imageModel.getHeight();
+
+        if (width <= 0 || height <= 0) {
+            throw new IllegalArgumentException("Invalid image dimensions: width and height must be positive.");
+        }
+
         int[][] pixels = imageModel.getPixels();
         int channels = imageModel.getChannels(); // Check for grayscale or RGB
         WritableImage writableImage = new WritableImage(width, height);
