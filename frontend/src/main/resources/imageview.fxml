@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.image.ImageView?>
 <BorderPane fx:id="imageBorderPane" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml">
 

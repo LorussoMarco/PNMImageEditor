@@ -14,8 +14,10 @@ public class MainFx extends Application {
     private final ControlledFxView transformationsView;
     private final ControlledFxView imageView;
     private final ControlledFxView pipelineView;
+    private final ControlledFxView logbarView;
 
     public MainFx() {
+        this.logbarView = LogBarViewFxml.getInstance();
         this.menuBarView = MenuBarViewFxml.getInstance();
         this.transformationsView = TransformationsViewFxml.getInstance();
         this.imageView = ImageViewFxml.getInstance();
@@ -29,6 +31,7 @@ public class MainFx extends Application {
         root.setLeft(this.transformationsView.getNode());
         root.setCenter(this.imageView.getNode());
         root.setRight(this.pipelineView.getNode());
+        root.setBottom(this.logbarView.getNode());
 
         ImageEventHandler eventHandler = new ImageEventHandler(stage);
 
@@ -46,6 +49,7 @@ public class MainFx extends Application {
         stage.toFront();
         stage.setScene(scene);
         stage.show();
+        LogBarViewFxml.getInstance().addLogEntry("Application started successfully.");
     }
 
     public static void main(String[] args) {

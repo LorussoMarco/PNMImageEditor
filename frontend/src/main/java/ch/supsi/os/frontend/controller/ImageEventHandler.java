@@ -3,6 +3,7 @@ package ch.supsi.os.frontend.controller;
 import ch.supsi.os.backend.application.ImageController;
 import ch.supsi.os.backend.business.ImageModel;
 import ch.supsi.os.frontend.view.ImageViewFxml;
+import ch.supsi.os.frontend.view.LogBarViewFxml;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -12,11 +13,16 @@ import java.io.IOException;
 public class ImageEventHandler implements EventHandler {
 
     private Stage primaryStage;
+    private Runnable onImageLoaded;
+
 
     public ImageEventHandler(Stage primaryStage) {
         this.primaryStage = primaryStage;
     }
 
+    public void setOnImageLoaded(Runnable onImageLoaded) {
+        this.onImageLoaded = onImageLoaded;
+    }
     public void handleOpenMenuItem() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open PNM Image");
@@ -29,6 +35,10 @@ public class ImageEventHandler implements EventHandler {
                 ImageController.getInstance().loadImageFromFile(selectedFile.getAbsolutePath());
                 ImageModel imageModel = ImageController.getInstance().getImageModel();
                 ImageViewFxml.getInstance().drawImage(imageModel);
+                LogBarViewFxml.getInstance().addLogEntry("File opened successfully: " + selectedFile.getAbsolutePath());
+                if (onImageLoaded != null) {
+                    onImageLoaded.run();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -44,6 +54,7 @@ public class ImageEventHandler implements EventHandler {
         if (selectedFile != null) {
             try {
                 ImageController.getInstance().saveImageToFile(selectedFile.getAbsolutePath());
+                LogBarViewFxml.getInstance().addLogEntry("File saved successfully: " + selectedFile.getAbsolutePath());
                 System.out.println("Image saved to " + selectedFile.getAbsolutePath());
             } catch (IOException e) {
                 e.printStackTrace();
