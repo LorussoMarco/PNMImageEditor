@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="aboutBox" xmlns:fx="http://javafx.com/fxml"
+      spacing="10" alignment="CENTER" style="-fx-padding: 20;">
+    <Label fx:id="titleLabel" text="About"/>
+    <Label fx:id="versionLabel" text=""/>
+    <Label fx:id="buildDateLabel" text=""/>
+    <Label fx:id="developerLabel" text=""/>
+    <Button fx:id="closeButton" text="Close"/>
+</VBox>
