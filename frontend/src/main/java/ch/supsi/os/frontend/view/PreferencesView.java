@@ -29,7 +29,9 @@ public class PreferencesView {
         List<String> languages = loadAvailableLanguages();
         languageComboBox.getItems().addAll(languages);
 
-
+        // Set the default value or saved preference
+        String defaultLanguage = languages.contains("English") ? "English" : languages.get(0);
+        languageComboBox.setValue(loadPreference("language", defaultLanguage));
 
         // Layout for preferences dialog
         GridPane gridPane = new GridPane();
@@ -82,5 +84,18 @@ public class PreferencesView {
             languages.add("English");
         }
         return languages;
+    }
+
+    static String loadPreference(String key, String defaultValue) {
+        Properties properties = new Properties();
+        if (Files.exists(PREFS_FILE_PATH)) {
+            try (FileReader reader = new FileReader(PREFS_FILE_PATH.toFile())) {
+                properties.load(reader);
+                return properties.getProperty(key, defaultValue);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return defaultValue;
     }
 }
