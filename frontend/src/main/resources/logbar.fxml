@@ -4,6 +4,6 @@
 
 <VBox fx:id="logBarVBox" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml">
     <Label text="Action Log" />
-    <TextArea fx:id="logTextArea" editable="false" wrapText="true" prefRowCount="10" />
+    <TextArea fx:id="logTextArea" editable="false" wrapText="true" prefRowCount="5" />
     <Button fx:id="clearLogButton" text="Clear Log" />
 </VBox>

@@ -29,7 +29,6 @@ public class TransformationPipelineController {
         for (ImageTransformationStrategy transformation : transformationPipeline) {
             transformation.applyTransformation(imageModel);
         }
-        clearPipeline();
     }
 
     public void clearPipeline() {
