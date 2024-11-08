@@ -81,5 +81,6 @@ public class MenuBarViewFxml implements ControlledFxView {
         menuItemOpen.setOnAction(e -> handler.handleOpenMenuItem());
         menuItemSaveAs.setOnAction(e -> handler.handleSaveMenuItem());
         menuItemAbout.setOnAction(e -> AboutView.getInstance().showAboutDialog());
+        menuItemPreferences.setOnAction(e -> PreferencesView.showPreferencesDialog());
     }
 }

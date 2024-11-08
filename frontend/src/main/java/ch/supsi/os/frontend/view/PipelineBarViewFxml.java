@@ -66,7 +66,6 @@ public class PipelineBarViewFxml implements ControlledFxView {
             if (imageModel != null && imageModel.getWidth() > 0 && imageModel.getHeight() > 0) {
                 pipelineController.applyPipeline(imageModel);
                 imageViewFxml.drawImage(imageModel);
-                pipelineTextArea.setText("Pipeline applied\n");
                 LogBarViewFxml.getInstance().addLogEntry("Transformation pipeline applied.");
             } else {
                 LogBarViewFxml.getInstance().addLogEntry("No image loaded to apply pipeline.");
