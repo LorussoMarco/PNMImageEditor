@@ -86,7 +86,7 @@ public class PreferencesView {
         return languages;
     }
 
-    private static String loadPreference(String key, String defaultValue) {
+    static String loadPreference(String key, String defaultValue) {
         Properties properties = new Properties();
         if (Files.exists(PREFS_FILE_PATH)) {
             try (FileReader reader = new FileReader(PREFS_FILE_PATH.toFile())) {

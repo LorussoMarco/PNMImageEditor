@@ -84,4 +84,44 @@ class PreferencesViewTest {
             }
         }
     }
+    @BeforeEach
+    void setUp() throws IOException {
+        Files.deleteIfExists(PREFS_FILE_PATH);
+    }
+
+    @AfterEach
+    void tearDown() throws IOException {
+        Files.deleteIfExists(PREFS_FILE_PATH);
+    }
+
+    @Test
+    void testLoadPreferenceWhenFileExists() throws IOException {
+        Properties properties = new Properties();
+        properties.setProperty("language", "English");
+        try (FileWriter writer = new FileWriter(PREFS_FILE_PATH.toFile())) {
+            properties.store(writer, "Test Preferences");
+        }
+
+        String result = PreferencesView.loadPreference("language", "Italian");
+        assertEquals("English", result, "The preference value should be 'English' as set in the file.");
+    }
+
+    @Test
+    void testLoadPreferenceWhenKeyDoesNotExist() throws IOException {
+        Properties properties = new Properties();
+        properties.setProperty("language", "English");
+        try (FileWriter writer = new FileWriter(PREFS_FILE_PATH.toFile())) {
+            properties.store(writer, "Test Preferences");
+        }
+
+        String result = PreferencesView.loadPreference("theme", "Light");
+        assertEquals("Light", result, "The method should return the default value 'Light' for a non-existing key.");
+    }
+
+    @Test
+    void testLoadPreferenceWhenFileDoesNotExist() {
+        assertFalse(Files.exists(PREFS_FILE_PATH), "The preferences file should not exist.");
+        String result = PreferencesView.loadPreference("language", "Italian");
+        assertEquals("Italian", result, "The method should return the default value 'Italian' when the file does not exist.");
+    }
 }
