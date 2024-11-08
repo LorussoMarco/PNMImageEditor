@@ -53,7 +53,7 @@ public class PreferencesView {
         dialog.showAndWait();
     }
 
-    private static void savePreferences(String language) {
+    static void savePreferences(String language) {
         try (FileWriter writer = new FileWriter(PREFS_FILE_PATH.toFile())) {
             Properties properties = new Properties();
             properties.setProperty("language", language);
@@ -64,7 +64,7 @@ public class PreferencesView {
     }
 
 
-    private static List<String> loadAvailableLanguages() {
+    static List<String> loadAvailableLanguages() {
         List<String> languages = new ArrayList<>();
         Properties languageProperties = new Properties();
         try (InputStream inputStream = PreferencesView.class.getResourceAsStream(LANGUAGES_RESOURCE_PATH)) {
