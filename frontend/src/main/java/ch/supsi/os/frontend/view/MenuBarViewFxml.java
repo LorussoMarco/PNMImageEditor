@@ -1,5 +1,6 @@
 package ch.supsi.os.frontend.view;
 
+import ch.supsi.os.backend.application.TranslationController;
 import ch.supsi.os.frontend.controller.EventHandler;
 import ch.supsi.os.frontend.controller.ImageEventHandler;
 import javafx.fxml.FXML;
@@ -16,6 +17,7 @@ import java.net.URL;
 public class MenuBarViewFxml implements ControlledFxView {
 
     private static MenuBarViewFxml myself;
+    private static final TranslationController translationsController = TranslationController.getInstance();
 
     @FXML
     private MenuBar menuBar;
@@ -53,7 +55,7 @@ public class MenuBarViewFxml implements ControlledFxView {
             try{
                 URL fxmlUrl = MenuBarViewFxml.class.getResource("/menubar.fxml");
                 if(fxmlUrl != null){
-                    FXMLLoader fxmlLoader = new FXMLLoader(fxmlUrl);
+                    FXMLLoader fxmlLoader = new FXMLLoader(fxmlUrl, translationsController.getTranslationBundle());
                     fxmlLoader.setController(myself);
                     fxmlLoader.load();
                 }
