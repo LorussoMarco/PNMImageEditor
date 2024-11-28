@@ -52,38 +52,6 @@ class PreferencesViewTest {
 
         assertEquals(testLanguage, properties.getProperty("language"), "Language should match the saved preference.");
     }
-
-    @Test
-    void testLoadAvailableLanguages() {
-        List<String> languages = PreferencesView.loadAvailableLanguages();
-
-        assertNotNull(languages, "Languages list should not be null.");
-        assertTrue(languages.contains("English"), "Languages list should contain English.");
-        assertTrue(languages.contains("Italian"), "Languages list should contain Italian.");
-        assertFalse(languages.contains("French"), "Languages list should contain French.");
-    }
-
-    @Test
-    void testLoadAvailableLanguagesFallback() {
-        Path testLanguagesPath = Path.of("src/test/resources/languages_test.properties");
-        Path tempPath = Path.of("src/test/resources/languages_test_backup.properties");
-        try {
-            Files.move(testLanguagesPath, tempPath);
-
-            List<String> languages = PreferencesView.loadAvailableLanguages();
-
-            assertEquals(2, languages.size(), "Fallback should provide only one language.");
-            assertEquals("English", languages.get(0), "Fallback language should be English.");
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                Files.move(tempPath, testLanguagesPath);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
     @BeforeEach
     void setUp() throws IOException {
         Files.deleteIfExists(PREFS_FILE_PATH);

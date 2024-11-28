@@ -4,15 +4,17 @@ import ch.supsi.os.backend.application.ImageController;
 import ch.supsi.os.backend.business.*;
 import ch.supsi.os.frontend.controller.EventHandler;
 import ch.supsi.os.frontend.controller.ImageEventHandler;
+import ch.supsi.os.frontend.controller.LocalizationController;
 import ch.supsi.os.frontend.controller.TransformationPipelineController;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.layout.VBox;
 import javafx.scene.control.Button;
+import javafx.scene.layout.VBox;
 
 import java.io.IOException;
-import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TransformationsViewFxml implements ControlledFxView {
 
@@ -36,30 +38,30 @@ public class TransformationsViewFxml implements ControlledFxView {
     @FXML
     private Button bNegative;
 
+    private final Map<Class<? extends ImageTransformationStrategy>, String> transformationKeys;
 
-    private TransformationsViewFxml() {}
+    private TransformationsViewFxml() {
+        // Mappatura tra le classi di trasformazione e le chiavi dei file di traduzione
+        transformationKeys = new HashMap<>();
+        transformationKeys.put(FlipUpsideDownTransformation.class, "transformations.flipUpDown");
+        transformationKeys.put(FlipSideToSideTransformation.class, "transformations.flipSide");
+        transformationKeys.put(Rotate90ClockwiseTransformation.class, "transformations.rotateClockwise");
+        transformationKeys.put(Rotate90AntiClockwiseTransformation.class, "transformations.rotateAntiClockwise");
+        transformationKeys.put(NegativeTransformation.class, "transformations.negative");
+    }
 
     public static TransformationsViewFxml getInstance() {
         if (myself == null) {
             myself = new TransformationsViewFxml();
-            try{
-                URL fxmlUrl = TransformationsViewFxml.class.getResource("/transformationsbar.fxml");
-                if(fxmlUrl != null){
-                    FXMLLoader fxmlLoader = new FXMLLoader(fxmlUrl);
-                    fxmlLoader.setController(myself);
-                    fxmlLoader.load();
-                }
+            try {
+                FXMLLoader loader = new FXMLLoader(TransformationsViewFxml.class.getResource("/transformationsbar.fxml"));
+                loader.setController(myself);
+                loader.load();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
         return myself;
-    }
-
-
-
-    @Override
-    public void update() {
     }
 
     @Override
@@ -68,58 +70,55 @@ public class TransformationsViewFxml implements ControlledFxView {
     }
 
     @Override
+    public void update() {
+        LocalizationController localizationController = LocalizationController.getInstance();
+        bFlipUpDown.setText(localizationController.getLocalizedText("transformations.flipUpDown"));
+        bFlipSide.setText(localizationController.getLocalizedText("transformations.flipSide"));
+        bRotateC.setText(localizationController.getLocalizedText("transformations.rotateClockwise"));
+        bRotateAC.setText(localizationController.getLocalizedText("transformations.rotateAntiClockwise"));
+        bNegative.setText(localizationController.getLocalizedText("transformations.negative"));
+    }
+
+    @Override
     public void initialize(EventHandler eventHandler) {
-        ImageViewFxml imageViewFxml = ImageViewFxml.getInstance();
+        update();
         ImageController imageController = ImageController.getInstance();
-
-        bFlipUpDown.setDisable(true);
-        bFlipSide.setDisable(true);
-        bRotateC.setDisable(true);
-        bRotateAC.setDisable(true);
-        bNegative.setDisable(true);
-
-        if (eventHandler instanceof ImageEventHandler) {
-            ImageEventHandler imageEventHandler = (ImageEventHandler) eventHandler;
-            imageEventHandler.setOnImageLoaded(this::enableButtons);
-        }
-
-        bFlipUpDown.setOnAction(e -> applyTransformation(new FlipUpsideDownTransformation(), imageController, imageViewFxml));
-        bFlipSide.setOnAction(e -> applyTransformation(new FlipSideToSideTransformation(), imageController, imageViewFxml));
-        bRotateC.setOnAction(e -> applyTransformation(new Rotate90ClockwiseTransformation(), imageController, imageViewFxml));
-        bRotateAC.setOnAction(e -> applyTransformation(new Rotate90AntiClockwiseTransformation(), imageController, imageViewFxml));
-        bNegative.setOnAction(e -> applyTransformation(new NegativeTransformation(), imageController, imageViewFxml));
-
         TransformationPipelineController pipelineController = TransformationPipelineController.getInstance();
+        PipelineBarViewFxml pipelineView = PipelineBarViewFxml.getInstance();
 
-        bFlipUpDown.setOnAction(e -> addTransformationToPipeline(new FlipUpsideDownTransformation(), pipelineController));
-        bFlipSide.setOnAction(e -> addTransformationToPipeline(new FlipSideToSideTransformation(), pipelineController));
-        bRotateC.setOnAction(e -> addTransformationToPipeline(new Rotate90ClockwiseTransformation(), pipelineController));
-        bRotateAC.setOnAction(e -> addTransformationToPipeline(new Rotate90AntiClockwiseTransformation(), pipelineController));
-        bNegative.setOnAction(e -> addTransformationToPipeline(new NegativeTransformation(), pipelineController));
-    }
+        // Disabilita i bottoni all'avvio
+        setButtonsDisabled(true);
 
-    private void enableButtons() {
-        bFlipUpDown.setDisable(false);
-        bFlipSide.setDisable(false);
-        bRotateC.setDisable(false);
-        bRotateAC.setDisable(false);
-        bNegative.setDisable(false);
-    }
-
-    private void addTransformationToPipeline(ImageTransformationStrategy strategy, TransformationPipelineController pipelineController) {
-        pipelineController.addTransformation(strategy);
-        PipelineBarViewFxml.getInstance().updatePipelineTextArea();
-        LogBarViewFxml.getInstance().addLogEntry(strategy.getClass().getSimpleName() + " added to queue");
-    }
-
-    private void applyTransformation(ImageTransformationStrategy strategy, ImageController imageController, ImageViewFxml imageViewFxml) {
-        ImageModel imageModel = imageController.getImageModel();
-        if (imageModel != null) {
-            strategy.applyTransformation(imageModel);
-            imageViewFxml.drawImage(imageModel);
-            LogBarViewFxml.getInstance().addLogEntry(strategy.getClass().getSimpleName() + " added to queue.");
-        } else {
-            LogBarViewFxml.getInstance().addLogEntry("No image loaded to apply transformation.");
+        // Aggiungi listener per abilitare i bottoni al caricamento dell'immagine
+        if (eventHandler instanceof ImageEventHandler) {
+            ((ImageEventHandler) eventHandler).addOnImageLoadedListener(() -> setButtonsDisabled(false));
         }
+
+        bFlipUpDown.setOnAction(e -> addTransformationToPipeline(new FlipUpsideDownTransformation(), pipelineController, pipelineView));
+        bFlipSide.setOnAction(e -> addTransformationToPipeline(new FlipSideToSideTransformation(), pipelineController, pipelineView));
+        bRotateC.setOnAction(e -> addTransformationToPipeline(new Rotate90ClockwiseTransformation(), pipelineController, pipelineView));
+        bRotateAC.setOnAction(e -> addTransformationToPipeline(new Rotate90AntiClockwiseTransformation(), pipelineController, pipelineView));
+        bNegative.setOnAction(e -> addTransformationToPipeline(new NegativeTransformation(), pipelineController, pipelineView));
+    }
+
+    private void setButtonsDisabled(boolean disabled) {
+        bFlipUpDown.setDisable(disabled);
+        bFlipSide.setDisable(disabled);
+        bRotateC.setDisable(disabled);
+        bRotateAC.setDisable(disabled);
+        bNegative.setDisable(disabled);
+    }
+
+    private void addTransformationToPipeline(ImageTransformationStrategy strategy, TransformationPipelineController pipelineController, PipelineBarViewFxml pipelineView) {
+        pipelineController.addTransformation(strategy);
+        pipelineView.updatePipelineTextArea();
+
+        String transformationKey = transformationKeys.getOrDefault(strategy.getClass(), "transformation.unknown");
+        String transformationName = LocalizationController.getInstance().getLocalizedText(transformationKey);
+
+        String logMessage = LocalizationController.getInstance().getLocalizedText("transformation.added")
+                .replace("{transformation}", transformationName);
+
+        LogBarViewFxml.getInstance().addLogEntry(logMessage);
     }
 }

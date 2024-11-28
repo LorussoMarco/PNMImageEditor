@@ -2,8 +2,12 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="logBarVBox" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml">
-    <Label text="Action Log" />
-    <TextArea fx:id="logTextArea" editable="false" wrapText="true" prefRowCount="5" />
-    <Button fx:id="clearLogButton" text="Clear Log" />
+<VBox fx:id="logBarVBox" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      prefWidth="300" spacing="5" alignment="TOP_LEFT"
+      style="-fx-background-color: #F9F9F9; -fx-padding: 10;">
+
+    <Label fx:id="logLabel" text="" />
+    <TextArea fx:id="logTextArea" editable="false" wrapText="true" prefRowCount="5"/>
+    <Button fx:id="clearLogButton" text="" />
+
 </VBox>

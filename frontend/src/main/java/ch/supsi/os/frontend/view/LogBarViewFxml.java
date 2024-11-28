@@ -1,6 +1,7 @@
 package ch.supsi.os.frontend.view;
 
 import ch.supsi.os.frontend.controller.EventHandler;
+import ch.supsi.os.frontend.controller.LocalizationController;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -9,9 +10,8 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
-import java.net.URL;
 
-public class LogBarViewFxml implements ControlledFxView{
+public class LogBarViewFxml implements ControlledFxView {
 
     private static LogBarViewFxml myself;
 
@@ -30,12 +30,9 @@ public class LogBarViewFxml implements ControlledFxView{
         if (myself == null) {
             myself = new LogBarViewFxml();
             try {
-                URL fxmlUrl = LogBarViewFxml.class.getResource("/logbar.fxml");
-                if (fxmlUrl != null) {
-                    FXMLLoader fxmlLoader = new FXMLLoader(fxmlUrl);
-                    fxmlLoader.setController(myself);
-                    fxmlLoader.load();
-                }
+                FXMLLoader loader = new FXMLLoader(LogBarViewFxml.class.getResource("/logbar.fxml"));
+                loader.setController(myself);
+                loader.load();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -47,10 +44,6 @@ public class LogBarViewFxml implements ControlledFxView{
         return logBarVBox;
     }
 
-    public void initialize() {
-        clearLogButton.setOnAction(e -> clearLog());
-    }
-
     public void addLogEntry(String message) {
         logTextArea.appendText(message + "\n");
     }
@@ -60,12 +53,14 @@ public class LogBarViewFxml implements ControlledFxView{
     }
 
     @Override
-    public void initialize(EventHandler eventHandler) {
-        clearLogButton.setOnAction(e -> clearLog());
+    public void update() {
+        LocalizationController localizationController = LocalizationController.getInstance();
+        clearLogButton.setText(localizationController.getLocalizedText("logbar.clear"));
     }
 
     @Override
-    public void update() {
-
+    public void initialize(EventHandler eventHandler) {
+        update();
+        clearLogButton.setOnAction(e -> clearLog());
     }
 }

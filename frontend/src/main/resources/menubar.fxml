@@ -2,15 +2,15 @@
 <?import javafx.scene.control.*?>
 
 <MenuBar fx:id="menuBar" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml">
-    <Menu fx:id="menuFile" text="File">
-        <MenuItem fx:id="menuItemOpen" text="Open"/>
-        <MenuItem fx:id="menuItemExport" text="Export"/>
-        <MenuItem fx:id="menuItemSaveAs" text="Save as..."/>
+    <Menu fx:id="menuFile">
+        <MenuItem fx:id="menuItemOpen"/>
+        <MenuItem fx:id="menuItemExport"/>
+        <MenuItem fx:id="menuItemSaveAs"/>
     </Menu>
-    <Menu fx:id="menuEdit" text="Edit">
-        <MenuItem fx:id="menuItemPreferences" text="Preferences"/>
+    <Menu fx:id="menuEdit">
+        <MenuItem fx:id="menuItemPreferences"/>
     </Menu>
-    <Menu fx:id="menuHelp" text="Help">
-        <MenuItem fx:id="menuItemAbout" text="About"/>
+    <Menu fx:id="menuHelp">
+        <MenuItem fx:id="menuItemAbout"/>
     </Menu>
 </MenuBar>

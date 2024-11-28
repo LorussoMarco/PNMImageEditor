@@ -1,5 +1,6 @@
 package ch.supsi.os.frontend.view;
 
+import ch.supsi.os.frontend.controller.LocalizationController;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -7,44 +8,44 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.geometry.Insets;
 
-import java.io.*;
-import java.nio.file.*;
-import java.util.ArrayList;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 
 public class PreferencesView {
 
     private static final String PREFS_FILE_NAME = "user_preferences.txt";
     private static final Path PREFS_FILE_PATH = Paths.get(System.getProperty("user.home"), PREFS_FILE_NAME);
-    private static final String LANGUAGES_RESOURCE_PATH = "/languages.properties";
 
     public static void showPreferencesDialog() {
         Stage dialog = new Stage();
-        dialog.setTitle("Preferences");
+        dialog.setTitle(LocalizationController.getInstance().getLocalizedText("preferences.title"));
         dialog.initModality(Modality.APPLICATION_MODAL);
 
-        // Load languages dynamically from languages.properties
         ComboBox<String> languageComboBox = new ComboBox<>();
-        List<String> languages = loadAvailableLanguages();
+        List<String> languages = LocalizationController.getInstance().getAvailableLanguages();
         languageComboBox.getItems().addAll(languages);
 
-        // Set the default value or saved preference
-        String defaultLanguage = languages.contains("English") ? "English" : languages.get(0);
-        languageComboBox.setValue(loadPreference("language", defaultLanguage));
+        // Set the default language
+        String currentLanguage = loadPreference("language", "en");
+        languageComboBox.setValue(currentLanguage);
 
-        // Layout for preferences dialog
         GridPane gridPane = new GridPane();
         gridPane.setPadding(new Insets(10));
         gridPane.setVgap(10);
         gridPane.setHgap(10);
 
-        gridPane.add(new Label("Select Language:"), 0, 0);
+        gridPane.add(new Label(LocalizationController.getInstance().getLocalizedText("preferences.select.language")), 0, 0);
         gridPane.add(languageComboBox, 1, 0);
 
-        Button saveButton = new Button("Save");
+        Button saveButton = new Button(LocalizationController.getInstance().getLocalizedText("preferences.save"));
         saveButton.setOnAction(e -> {
-            savePreferences(languageComboBox.getValue());
+            String selectedLanguage = languageComboBox.getValue();
+            PreferencesView.savePreferences(selectedLanguage);
+            LocalizationController.getInstance().setLocale(Locale.forLanguageTag(selectedLanguage));
             dialog.close();
         });
 
@@ -55,44 +56,32 @@ public class PreferencesView {
         dialog.showAndWait();
     }
 
-    static void savePreferences(String language) {
-        try (FileWriter writer = new FileWriter(PREFS_FILE_PATH.toFile())) {
+    public static void savePreferences(String language) {
+        String languageTag = mapLanguageToTag(language); // Map user-friendly name to tag
+        try (var writer = Files.newBufferedWriter(PREFS_FILE_PATH)) {
             Properties properties = new Properties();
-            properties.setProperty("language", language);
+            properties.setProperty("language", languageTag);
             properties.store(writer, "User Preferences");
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-
-    static List<String> loadAvailableLanguages() {
-        List<String> languages = new ArrayList<>();
-        Properties languageProperties = new Properties();
-        try (InputStream inputStream = PreferencesView.class.getResourceAsStream(LANGUAGES_RESOURCE_PATH)) {
-            if (inputStream != null) {
-                languageProperties.load(inputStream);
-                for (String key : languageProperties.stringPropertyNames()) {
-                    languages.add(languageProperties.getProperty(key));
-                }
-            } else {
-                System.err.println("Languages resource file not found. Defaulting to English.");
-                languages.add("English");
-            }
-        } catch (IOException e) {
-            System.err.println("Error loading languages: " + e.getMessage());
-            languages.add("English");
+    private static String mapLanguageToTag(String language) {
+        switch (language) {
+            case "English": return "en";
+            case "Italian": return "it";
+            default: return "en"; // Default to English
         }
-        return languages;
     }
 
-    static String loadPreference(String key, String defaultValue) {
+    public static String loadPreference(String key, String defaultValue) {
         Properties properties = new Properties();
         if (Files.exists(PREFS_FILE_PATH)) {
-            try (FileReader reader = new FileReader(PREFS_FILE_PATH.toFile())) {
+            try (var reader = Files.newBufferedReader(PREFS_FILE_PATH)) {
                 properties.load(reader);
                 return properties.getProperty(key, defaultValue);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
