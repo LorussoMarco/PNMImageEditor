@@ -1,71 +1,95 @@
 package ch.supsi.os.frontend.controller;
 
 import ch.supsi.os.frontend.model.LocalizationModel;
+import ch.supsi.os.frontend.view.ControlledFxView;
+import ch.supsi.os.frontend.view.LogBarViewFxml;
 
-import java.io.*;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Locale;
-import java.util.Properties;
-import java.util.ResourceBundle;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
 
 public class LocalizationController {
 
-    private static LocalizationController myself;
-    private static final String PREFS_FILE_NAME = "user_preferences.txt";
-    private static final Path PREFS_FILE_PATH = Paths.get(System.getProperty("user.home"), PREFS_FILE_NAME);
+    private static LocalizationController instance;
+    private final LocalizationModel localizationModel;
+    private final List<ControlledFxView> registeredViews = new ArrayList<>();
     private static final String LANGUAGES_RESOURCE_PATH = "/languages.properties";
 
     private LocalizationController() {
+        localizationModel = new LocalizationModel();
     }
 
     public static LocalizationController getInstance() {
-        if (myself == null) {
-            myself = new LocalizationController();
+        if (instance == null) {
+            instance = new LocalizationController();
         }
-        return myself;
+        return instance;
     }
 
-    public static String getLocalizedText(String key) {
-        String language = getSelectedLanguage();
-        Locale locale = new Locale(language);
-        ResourceBundle bundle = ResourceBundle.getBundle("translations", locale);
-
-        return bundle.getString(key);
+    public void initializeLocale() {
+        String userLanguage = LocalizationModel.loadPreference("language", "en");
+        Locale locale = mapLanguageToLocale(userLanguage);
+        localizationModel.setLocale(locale);
+        notifyLocaleChanged();
     }
 
+    public void setLocale(Locale locale) {
+        localizationModel.setLocale(locale);
+        notifyLocaleChanged();
+    }
 
+    public String getLocalizedText(String key) {
+        ResourceBundle bundle = ResourceBundle.getBundle("translations", localizationModel.getLocale());
+        return bundle.containsKey(key) ? bundle.getString(key) : "!" + key;
+    }
 
-    public static String getSelectedLanguage() {
-        Properties properties = new Properties();
-        try {
-            InputStream inputStream = LocalizationModel.class.getClassLoader().getResourceAsStream(PREFS_FILE_NAME);
-
+    public List<String> getAvailableLanguages() {
+        Properties languageProperties = new Properties();
+        List<String> languages = new ArrayList<>();
+        try (InputStream inputStream = getClass().getResourceAsStream(LANGUAGES_RESOURCE_PATH)) {
             if (inputStream != null) {
-                properties.load(inputStream);
-            } else {
-
-                URL resourceUrl = LocalizationModel.class.getClassLoader().getResource("");
-                System.out.println(resourceUrl);
-                if (resourceUrl != null) {
-                    File resourceFolder = new File(resourceUrl.toURI());
-                    File configFile = new File(resourceFolder, CONFIG_FILE_PATH);
-
-                    try (OutputStream output = new FileOutputStream(configFile)) {
-                        properties.setProperty("language", "en");
-                        properties.setProperty("inputAreaSize", "80");
-                        properties.setProperty("outputAreaSize", "25");
-                        properties.store(output, null);
-                    }
+                languageProperties.load(inputStream);
+                for (String key : languageProperties.stringPropertyNames()) {
+                    languages.add(languageProperties.getProperty(key));
                 }
             }
-        } catch (IOException | URISyntaxException e) {
-            return "en";
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return properties.getProperty("language");
+        return languages.isEmpty() ? List.of("English") : languages;
     }
 
+    public void registerView(ControlledFxView view) {
+        registeredViews.add(view);
+    }
+
+    private Locale mapLanguageToLocale(String language) {
+        switch (language.toLowerCase()) {
+            case "en": case "english": return Locale.ENGLISH;
+            case "it": case "italian": return Locale.ITALIAN;
+            default: return Locale.ENGLISH;
+        }
+    }
+
+    public void notifyLocaleChanged() {
+        for (ControlledFxView view : registeredViews) {
+            view.update();
+        }
+
+        LogBarViewFxml.getInstance().clearLog();
+        LogBarViewFxml.getInstance().addLogEntry(getLocalizedText("log.language.changed"));
+    }
+
+    public String getAppProperty(String key, String defaultValue) {
+        Properties properties = new Properties();
+        try (InputStream input = getClass().getResourceAsStream("/application.properties")) {
+            if (input != null) {
+                properties.load(input);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return properties.getProperty(key, defaultValue);
+    }
 
 }

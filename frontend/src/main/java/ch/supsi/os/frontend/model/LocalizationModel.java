@@ -1,32 +1,38 @@
 package ch.supsi.os.frontend.model;
 
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-
-import java.text.MessageFormat;
 import java.util.Locale;
-import java.util.ResourceBundle;
+import java.util.Properties;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class LocalizationModel {
 
-    public static Locale defaultLocale = Locale.forLanguageTag("en");
-    private final ObjectProperty<Locale> locale;
+    private Locale locale;
+    private static final Path PREFS_FILE_PATH = Paths.get(System.getProperty("user.home"), "user_preferences.txt");
 
     public LocalizationModel() {
-        locale = new SimpleObjectProperty<>(getDefaultLocale());
-        locale.addListener((observable, oldValue, newValue) -> Locale.setDefault(newValue));
-    }
-
-    public Locale getDefaultLocale() {
-        return defaultLocale;
-    }
-
-    public String get(final String key, final Object... args) {
-        ResourceBundle bundle = ResourceBundle.getBundle("translations", getLocale());
-        return MessageFormat.format(bundle.getString(key), args);
+        this.locale = Locale.ENGLISH;
     }
 
     public Locale getLocale() {
-        return locale.get();
+        return locale;
+    }
+
+    public void setLocale(Locale locale) {
+        this.locale = locale;
+    }
+
+    public static String loadPreference(String key, String defaultValue) {
+        Properties properties = new Properties();
+        if (Files.exists(PREFS_FILE_PATH)) {
+            try (var reader = Files.newBufferedReader(PREFS_FILE_PATH)) {
+                properties.load(reader);
+                return properties.getProperty(key, defaultValue);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return defaultValue;
     }
 }

@@ -1,17 +1,17 @@
 package ch.supsi.os.frontend.view;
 
+import ch.supsi.os.frontend.controller.LocalizationController;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.scene.Scene;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.Properties;
 
 public class AboutView {
@@ -35,16 +35,23 @@ public class AboutView {
     private Button closeButton;
 
     private static AboutView instance;
-    private Properties properties;
-
+    private final Properties properties;
 
     private AboutView() {
-        loadProperties();
+        properties = new Properties();
         try {
-            URL fxmlUrl = AboutView.class.getResource("/about.fxml");
-            FXMLLoader loader = new FXMLLoader(fxmlUrl);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/about.fxml"));
             loader.setController(this);
             loader.load();
+
+            // Load properties from application.properties
+            try (InputStream input = getClass().getResourceAsStream("/application.properties")) {
+                if (input != null) {
+                    properties.load(input);
+                } else {
+                    throw new IOException("application.properties not found");
+                }
+            }
         } catch (IOException e) {
             throw new RuntimeException("Failed to load About view", e);
         }
@@ -57,51 +64,42 @@ public class AboutView {
         return instance;
     }
 
-    private void loadProperties() {
-        properties = new Properties();
-        try (InputStream input = getClass().getResourceAsStream("/application.properties")) {
-            if (input != null) {
-                properties.load(input);
-            } else {
-                throw new RuntimeException("Properties file not found");
-            }
+    public void showAboutDialog() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/about.fxml"));
+            loader.setController(this);
+            VBox aboutBox = loader.load();
+
+            Stage aboutStage = new Stage();
+            aboutStage.initModality(Modality.APPLICATION_MODAL);
+            aboutStage.setTitle(LocalizationController.getInstance().getLocalizedText("about.title"));
+
+            Scene scene = new Scene(aboutBox);
+            aboutStage.setScene(scene);
+
+            closeButton.setOnAction(e -> aboutStage.close());
+            update(); // Update UI with localized content
+            aboutStage.showAndWait();
+
         } catch (IOException e) {
-            throw new RuntimeException("Failed to load properties file", e);
+            throw new RuntimeException("Failed to load About dialog", e);
         }
     }
 
-    public void showAboutDialog() {
-        Stage aboutStage = new Stage();
-        aboutStage.initModality(Modality.APPLICATION_MODAL);
-        aboutStage.setTitle("About");
 
-        Scene scene = new Scene(aboutBox);
-        aboutStage.setScene(scene);
-
-        closeButton.setOnAction(e -> aboutStage.close());
-
-        // Set dynamic content from properties
-        titleLabel.setText("About " + getName());
-        versionLabel.setText("Version: " + getVersion());
-        buildDateLabel.setText("Build date: " + getBuildTimestamp());
-        developerLabel.setText("Developed by: " + getDevelopers());
-
-        aboutStage.showAndWait();
+    public void update() {
+        LocalizationController localizationController = LocalizationController.getInstance();
+        titleLabel.setText(localizationController.getLocalizedText("about.title"));
+        versionLabel.setText(localizationController.getLocalizedText("about.version") + ": " +
+                getAppProperty("application.version", "N/A"));
+        buildDateLabel.setText(localizationController.getLocalizedText("about.build.date") + ": " +
+                getAppProperty("build.timestamp", "N/A"));
+        developerLabel.setText(localizationController.getLocalizedText("about.developers") + ": " +
+                getAppProperty("developers", "N/A"));
+        closeButton.setText(localizationController.getLocalizedText("about.close"));
     }
 
-    public String getName() {
-        return properties.getProperty("application.name", "N/A");
-    }
-
-    public String getVersion() {
-        return properties.getProperty("application.version", "N/A");
-    }
-
-    public String getBuildTimestamp() {
-        return properties.getProperty("build.timestamp", "N/A");
-    }
-
-    public String getDevelopers() {
-        return properties.getProperty("developers", "N/A");
+    private String getAppProperty(String key, String defaultValue) {
+        return LocalizationController.getInstance().getAppProperty(key, defaultValue);
     }
 }

@@ -6,10 +6,10 @@
       prefWidth="150" spacing="10" alignment="CENTER"
       style="-fx-background-color: #F0F0F0; -fx-padding: 10;">
 
-    <Button fx:id="bFlipUpDown" text="Flip up-side-down"  prefWidth="120"/>
-    <Button fx:id="bFlipSide" text="Flip side-to-side"  prefWidth="120"/>
-    <Button fx:id="bRotateC" wrapText="true" text="Rotate 90° clockwise"  prefWidth="120"/>
-    <Button fx:id="bRotateAC" wrapText="true" text="Rotate 90° anti-clockwise"  prefWidth="120"/>
-    <Button fx:id="bNegative" text="Negative"  prefWidth="120"/>
+    <Button fx:id="bFlipUpDown" text="" prefWidth="120"/>
+    <Button fx:id="bFlipSide" text="" prefWidth="120"/>
+    <Button fx:id="bRotateC" text="" prefWidth="120" wrapText="true"/>
+    <Button fx:id="bRotateAC" text="" prefWidth="120" wrapText="true"/>
+    <Button fx:id="bNegative" text="" prefWidth="120"/>
 
 </VBox>

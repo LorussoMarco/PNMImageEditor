@@ -1,6 +1,7 @@
 package ch.supsi.os.frontend;
 
 import ch.supsi.os.frontend.controller.ImageEventHandler;
+import ch.supsi.os.frontend.controller.LocalizationController;
 import ch.supsi.os.frontend.view.*;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -8,7 +9,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 public class MainFx extends Application {
-    public static final String APPLICATION_TITLE = "2D Image Editor";
+    public static final String APPLICATION_TITLE = LocalizationController.getInstance().getLocalizedText("app.title");
 
     private final ControlledFxView menuBarView;
     private final ControlledFxView transformationsView;
@@ -26,6 +27,15 @@ public class MainFx extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+        // Initialize localization
+        LocalizationController localizationController = LocalizationController.getInstance();
+
+        localizationController.registerView(menuBarView);
+        localizationController.registerView(transformationsView);
+        localizationController.registerView(imageView);
+        localizationController.registerView(pipelineView);
+        localizationController.registerView(logbarView);
+
         BorderPane root = new BorderPane();
         root.setTop(this.menuBarView.getNode());
         root.setLeft(this.transformationsView.getNode());
@@ -39,17 +49,19 @@ public class MainFx extends Application {
         imageView.initialize(eventHandler);
         transformationsView.initialize(eventHandler);
         pipelineView.initialize(eventHandler);
+        logbarView.initialize(eventHandler);
 
         Scene scene = new Scene(root);
 
-        stage.setTitle(APPLICATION_TITLE);
+        stage.setTitle(localizationController.getLocalizedText("app.title"));
         stage.setResizable(true);
         stage.setMinWidth(500);
         stage.setMinHeight(500);
         stage.toFront();
         stage.setScene(scene);
         stage.show();
-        LogBarViewFxml.getInstance().addLogEntry("Application started successfully.");
+
+        LogBarViewFxml.getInstance().addLogEntry(localizationController.getLocalizedText("app.start.log"));
     }
 
     public static void main(String[] args) {

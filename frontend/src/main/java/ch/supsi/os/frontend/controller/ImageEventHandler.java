@@ -9,23 +9,31 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ImageEventHandler implements EventHandler {
 
     private Stage primaryStage;
-    private Runnable onImageLoaded;
-
+    private final List<Runnable> onImageLoadedListeners = new ArrayList<>();
 
     public ImageEventHandler(Stage primaryStage) {
         this.primaryStage = primaryStage;
     }
 
-    public void setOnImageLoaded(Runnable onImageLoaded) {
-        this.onImageLoaded = onImageLoaded;
+    public void addOnImageLoadedListener(Runnable listener) {
+        onImageLoadedListeners.add(listener);
     }
+
+    private void notifyImageLoadedListeners() {
+        for (Runnable listener : onImageLoadedListeners) {
+            listener.run();
+        }
+    }
+
     public void handleOpenMenuItem() {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open PNM Image");
+        fileChooser.setTitle(LocalizationController.getInstance().getLocalizedText("menu.file.open"));
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PNM files", "*.pbm", "*.pgm", "*.ppm"));
 
         File selectedFile = fileChooser.showOpenDialog(primaryStage);
@@ -35,10 +43,11 @@ public class ImageEventHandler implements EventHandler {
                 ImageController.getInstance().loadImageFromFile(selectedFile.getAbsolutePath());
                 ImageModel imageModel = ImageController.getInstance().getImageModel();
                 ImageViewFxml.getInstance().drawImage(imageModel);
-                LogBarViewFxml.getInstance().addLogEntry("File opened successfully: " + selectedFile.getAbsolutePath());
-                if (onImageLoaded != null) {
-                    onImageLoaded.run();
-                }
+                LogBarViewFxml.getInstance().addLogEntry(
+                        LocalizationController.getInstance().getLocalizedText("log.image.opened")
+                                .replace("{file}", selectedFile.getAbsolutePath())
+                );
+                notifyImageLoadedListeners(); // Notifica tutti i listener
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -47,19 +56,21 @@ public class ImageEventHandler implements EventHandler {
 
     public void handleSaveMenuItem() {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Save Image");
+        fileChooser.setTitle(LocalizationController.getInstance().getLocalizedText("menu.file.saveAs"));
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PNM files", "*.pbm", "*.pgm", "*.ppm"));
 
         File selectedFile = fileChooser.showSaveDialog(primaryStage);
         if (selectedFile != null) {
             try {
                 ImageController.getInstance().saveImageToFile(selectedFile.getAbsolutePath());
-                LogBarViewFxml.getInstance().addLogEntry("File saved successfully: " + selectedFile.getAbsolutePath());
+                LogBarViewFxml.getInstance().addLogEntry(
+                        LocalizationController.getInstance().getLocalizedText("log.image.saved")
+                                .replace("{file}", selectedFile.getAbsolutePath())
+                );
                 System.out.println("Image saved to " + selectedFile.getAbsolutePath());
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
-
 }

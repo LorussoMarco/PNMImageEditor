@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.VBox?>
@@ -9,8 +8,7 @@
       style="-fx-background-color: #F8F8F8; -fx-padding: 10;">
 
     <TextArea fx:id="pipelineTextArea" prefHeight="400" prefWidth="180" wrapText="true" editable="false"/>
-
-    <Button text="Apply" fx:id="bApply" prefWidth="150" alignment="CENTER"/>
-    <Button text="Clear" fx:id="bClear" prefWidth="150" alignment="CENTER"/>
+    <Button fx:id="bApply" text="" prefWidth="150" alignment="CENTER"/>
+    <Button fx:id="bClear" text="" prefWidth="150" alignment="CENTER"/>
 
 </VBox>
