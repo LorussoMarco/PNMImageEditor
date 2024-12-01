@@ -14,7 +14,7 @@ import java.io.IOException;
 public class LogBarViewFxml implements ControlledFxView {
 
     private static LogBarViewFxml myself;
-
+    private static boolean initialized = false;
     @FXML
     private VBox logBarVBox;
 
@@ -33,11 +33,16 @@ public class LogBarViewFxml implements ControlledFxView {
                 FXMLLoader loader = new FXMLLoader(LogBarViewFxml.class.getResource("/logbar.fxml"));
                 loader.setController(myself);
                 loader.load();
+                initialized = true; // Imposta il flag a true
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
         return myself;
+    }
+
+    public static boolean isInitialized() {
+        return initialized;
     }
 
     public Node getNode() {

@@ -26,10 +26,11 @@ public class MainFx extends Application {
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage){
         // Initialize localization
         LocalizationController localizationController = LocalizationController.getInstance();
 
+        localizationController.initializeLocale();
         localizationController.registerView(menuBarView);
         localizationController.registerView(transformationsView);
         localizationController.registerView(imageView);

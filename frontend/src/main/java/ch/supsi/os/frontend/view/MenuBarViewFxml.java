@@ -25,7 +25,7 @@ public class MenuBarViewFxml implements ControlledFxView {
     @FXML
     private MenuItem menuItemOpen;
     @FXML
-    private MenuItem menuItemExport;
+    private MenuItem menuItemSave;
 
     @FXML
     private MenuItem menuItemSaveAs;
@@ -67,7 +67,7 @@ public class MenuBarViewFxml implements ControlledFxView {
         LocalizationController localizationController = LocalizationController.getInstance();
         menuFile.setText(localizationController.getLocalizedText("menu.file"));
         menuItemOpen.setText(localizationController.getLocalizedText("menu.file.open"));
-        menuItemExport.setText(localizationController.getLocalizedText("menu.file.export"));
+        menuItemSave.setText(localizationController.getLocalizedText("menu.file.export"));
         menuItemSaveAs.setText(localizationController.getLocalizedText("menu.file.saveAs"));
         menuEdit.setText(localizationController.getLocalizedText("menu.edit"));
         menuItemPreferences.setText(localizationController.getLocalizedText("menu.edit.preferences"));
@@ -81,7 +81,8 @@ public class MenuBarViewFxml implements ControlledFxView {
         update();
         ImageEventHandler handler = (ImageEventHandler) eventHandler;
         menuItemOpen.setOnAction(e -> handler.handleOpenMenuItem());
-        menuItemSaveAs.setOnAction(e -> handler.handleSaveMenuItem());
+        menuItemSave.setOnAction(e -> handler.handleSaveMenuItem());
+        menuItemSaveAs.setOnAction(e -> handler.handleSaveAsMenuItem());
         menuItemAbout.setOnAction(e -> AboutView.getInstance().showAboutDialog());
         menuItemPreferences.setOnAction(e -> PreferencesView.showPreferencesDialog());
     }

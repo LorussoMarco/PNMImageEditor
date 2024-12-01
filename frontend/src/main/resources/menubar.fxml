@@ -4,7 +4,7 @@
 <MenuBar fx:id="menuBar" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml">
     <Menu fx:id="menuFile">
         <MenuItem fx:id="menuItemOpen"/>
-        <MenuItem fx:id="menuItemExport"/>
+        <MenuItem fx:id="menuItemSave"/>
         <MenuItem fx:id="menuItemSaveAs"/>
     </Menu>
     <Menu fx:id="menuEdit">

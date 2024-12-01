@@ -57,21 +57,12 @@ public class PreferencesView {
     }
 
     public static void savePreferences(String language) {
-        String languageTag = mapLanguageToTag(language); // Map user-friendly name to tag
         try (var writer = Files.newBufferedWriter(PREFS_FILE_PATH)) {
             Properties properties = new Properties();
-            properties.setProperty("language", languageTag);
+            properties.setProperty("language", language);
             properties.store(writer, "User Preferences");
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    private static String mapLanguageToTag(String language) {
-        switch (language) {
-            case "English": return "en";
-            case "Italian": return "it";
-            default: return "en"; // Default to English
         }
     }
 
