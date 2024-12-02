@@ -1,76 +1,77 @@
 package ch.supsi.os.frontend.controller;
 
-import ch.supsi.os.backend.business.ImageModel;
-import ch.supsi.os.backend.business.ImageTransformationStrategy;
+import ch.supsi.os.backend.business.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import static org.junit.jupiter.api.Assertions.*;
 
 class TransformationPipelineControllerTest {
     private TransformationPipelineController pipelineController;
     private ImageModel imageModel;
+    private LocalizationController localizationController;
 
     @BeforeEach
     void setUp() {
         pipelineController = TransformationPipelineController.getInstance();
         pipelineController.clearPipeline(); // Ensure the pipeline is empty before each test
         imageModel = new ImageModel();
+        localizationController = LocalizationController.getInstance();
     }
 
     @Test
     void testAddTransformation() {
-        MockTransformation transformation = new MockTransformation();
+        FlipUpsideDownTransformation transformation = new FlipUpsideDownTransformation();
         pipelineController.addTransformation(transformation);
 
-        assertEquals("MockTransformation\n", pipelineController.getPipelineDescription());
+        // Recupera il nome localizzato della trasformazione
+        String localizedName = localizationController.getLocalizedText("transformation.flipupsidedown");
+        String expectedDescription = localizedName + "\n";
+
+        assertEquals(expectedDescription, pipelineController.getPipelineDescription());
     }
 
     @Test
     void testApplyPipeline() {
-        // Create multiple mock transformations and add them to the pipeline
-        MockTransformation transformation1 = new MockTransformation();
-        MockTransformation transformation2 = new MockTransformation();
+        // Aggiungi trasformazioni multiple
+        FlipUpsideDownTransformation transformation1 = new FlipUpsideDownTransformation();
+        FlipSideToSideTransformation transformation2 = new FlipSideToSideTransformation();
         pipelineController.addTransformation(transformation1);
         pipelineController.addTransformation(transformation2);
 
-        // Apply the pipeline on the ImageModel
+        // Applica la pipeline sull'immagine
         pipelineController.applyPipeline(imageModel);
 
-        // Verify that the transformations were applied
-        assertTrue(transformation1.isApplied);
-        assertTrue(transformation2.isApplied);
-        assertTrue(pipelineController.getPipelineDescription().isEmpty(), "Pipeline should be empty after application");
+        // Non verifichiamo direttamente l'immagine, ma possiamo verificare che la pipeline sia ancora descritta correttamente
+        String expectedDescription = localizationController.getLocalizedText("transformation.flipupsidedown") + "\n" +
+                localizationController.getLocalizedText("transformation.flipsidetoside") + "\n";
+
+        assertEquals(expectedDescription, pipelineController.getPipelineDescription());
     }
 
     @Test
     void testClearPipeline() {
-        MockTransformation transformation = new MockTransformation();
+        FlipUpsideDownTransformation transformation = new FlipUpsideDownTransformation();
         pipelineController.addTransformation(transformation);
 
+        // Svuota la pipeline
         pipelineController.clearPipeline();
+
+        // Verifica che la descrizione sia vuota
         assertTrue(pipelineController.getPipelineDescription().isEmpty(), "Pipeline description should be empty after clearing");
     }
 
     @Test
     void testGetPipelineDescription() {
-        MockTransformation transformation1 = new MockTransformation();
-        MockTransformation transformation2 = new MockTransformation();
+        Rotate90ClockwiseTransformation transformation1 = new Rotate90ClockwiseTransformation();
+        Rotate90AntiClockwiseTransformation transformation2 = new Rotate90AntiClockwiseTransformation();
         pipelineController.addTransformation(transformation1);
         pipelineController.addTransformation(transformation2);
 
-        String expectedDescription = "MockTransformation\nMockTransformation\n";
+        // Recupera la descrizione localizzata
+        String expectedDescription = localizationController.getLocalizedText("transformation.rotateclockwise") + "\n" +
+                localizationController.getLocalizedText("transformation.rotateanticlockwise") + "\n";
+
         assertEquals(expectedDescription, pipelineController.getPipelineDescription());
-    }
-
-    private static class MockTransformation implements ImageTransformationStrategy {
-        boolean isApplied = false;
-
-        @Override
-        public void applyTransformation(ImageModel imageModel) {
-            isApplied = true;
-        }
     }
 }

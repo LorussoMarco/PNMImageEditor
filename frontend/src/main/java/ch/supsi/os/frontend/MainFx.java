@@ -9,8 +9,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 public class MainFx extends Application {
-    public static final String APPLICATION_TITLE = LocalizationController.getInstance().getLocalizedText("app.title");
-
     private final ControlledFxView menuBarView;
     private final ControlledFxView transformationsView;
     private final ControlledFxView imageView;
@@ -26,10 +24,11 @@ public class MainFx extends Application {
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage){
         // Initialize localization
         LocalizationController localizationController = LocalizationController.getInstance();
 
+        localizationController.initializeLocale();
         localizationController.registerView(menuBarView);
         localizationController.registerView(transformationsView);
         localizationController.registerView(imageView);

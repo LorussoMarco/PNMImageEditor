@@ -3,6 +3,7 @@ package ch.supsi.os.frontend.controller;
 import ch.supsi.os.frontend.model.LocalizationModel;
 import ch.supsi.os.frontend.view.ControlledFxView;
 import ch.supsi.os.frontend.view.LogBarViewFxml;
+import javafx.application.Platform;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,6 +18,7 @@ public class LocalizationController {
 
     private LocalizationController() {
         localizationModel = new LocalizationModel();
+        initializeLocale();
     }
 
     public static LocalizationController getInstance() {
@@ -76,8 +78,14 @@ public class LocalizationController {
             view.update();
         }
 
-        LogBarViewFxml.getInstance().clearLog();
-        LogBarViewFxml.getInstance().addLogEntry(getLocalizedText("log.language.changed"));
+        // Aggiorna la LogBar solo se JavaFX è inizializzato
+        if (LogBarViewFxml.isInitialized()) {
+            Platform.runLater(() -> {
+                LogBarViewFxml logBar = LogBarViewFxml.getInstance();
+                logBar.clearLog();
+                logBar.addLogEntry(getLocalizedText("log.language.changed"));
+            });
+        }
     }
 
     public String getAppProperty(String key, String defaultValue) {

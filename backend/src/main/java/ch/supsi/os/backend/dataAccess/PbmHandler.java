@@ -52,27 +52,33 @@ public class PbmHandler extends AbstractImageHandler {
 
     @Override
     public void save(String filePath, ImageModel imageModel) throws IOException {
-        if (!"P1".equals(imageModel.getMagicNumber())) {
+        if (!imageModel.getMagicNumber().equals("P1")) {
             if (nextHandler != null) {
                 nextHandler.save(filePath, imageModel);
             } else {
-                throw new IllegalArgumentException("No handler available for format: " + imageModel.getMagicNumber());
+                throw new UnsupportedOperationException("Unsupported format for saving.");
             }
             return;
         }
 
-        // Proceed with saving in PBM format
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-            writer.write("P1\n");
-            writer.write(imageModel.getWidth() + " " + imageModel.getHeight() + "\n");
+            // Write magic number and dimensions
+            writer.write("P1");
+            writer.newLine();
+            writer.write(imageModel.getWidth() + " " + imageModel.getHeight());
+            writer.newLine();
 
+            // Write pixel data row by row
             int[][] pixels = imageModel.getPixels();
             for (int[] row : pixels) {
                 for (int pixel : row) {
-                    writer.write((pixel == 255 ? "1" : "0") + " ");
+                    writer.write(pixel + " "); // Write pixel with a space
                 }
-                writer.newLine();
+                writer.newLine(); // End of row
             }
+
+            // Ensure buffer is flushed
+            writer.flush();
         }
     }
 

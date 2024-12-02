@@ -1,10 +1,11 @@
 package ch.supsi.os.backend.application;
 
+import ch.supsi.os.backend.business.FormatConverterFactory;
+import ch.supsi.os.backend.business.ImageModel;
+import ch.supsi.os.backend.dataAccess.ImageHandler;
 import ch.supsi.os.backend.dataAccess.PbmHandler;
 import ch.supsi.os.backend.dataAccess.PgmHandler;
 import ch.supsi.os.backend.dataAccess.PpmHandler;
-import ch.supsi.os.backend.business.ImageModel;
-import ch.supsi.os.backend.dataAccess.ImageHandler;
 
 import java.io.IOException;
 
@@ -13,10 +14,13 @@ public class ImageController {
     private static ImageController instance;
     private ImageModel imageModel;
     private ImageHandler handlerChain;
+    private String currentImagePath;
+    private final FormatConverterFactory converterFactory;
 
     private ImageController() {
         this.imageModel = new ImageModel();
         initializeChain();
+        this.converterFactory = new FormatConverterFactory();
     }
 
     public static ImageController getInstance() {
@@ -27,44 +31,52 @@ public class ImageController {
     }
 
     private void initializeChain() {
-        // Create individual handlers
         ImageHandler pbmHandler = new PbmHandler();
         ImageHandler pgmHandler = new PgmHandler();
         ImageHandler ppmHandler = new PpmHandler();
 
-        // Set up the chain
         pbmHandler.setNextHandler(pgmHandler);
         pgmHandler.setNextHandler(ppmHandler);
 
-        this.handlerChain = pbmHandler; // Start of the chain
+        this.handlerChain = pbmHandler;
     }
 
     public void loadImageFromFile(String filePath) throws IOException {
-        // Delegate to chain
-        handlerChain.handle(filePath, imageModel);
+        try {
+            handlerChain.handle(filePath, imageModel);
+            currentImagePath = filePath;
+        } catch (IllegalArgumentException e) {
+            throw new IOException("Unsupported or invalid image format: " + filePath, e);
+        } catch (IOException e) {
+            throw new IOException("Error reading file: " + filePath, e);
+        } catch (Exception e) {
+            throw new IOException("Unexpected error occurred while loading the file: " + filePath, e);
+        }
     }
 
     public void saveImageToFile(String filePath) throws IOException {
         if (imageModel == null) {
             throw new IllegalStateException("No image loaded to save.");
         }
-
-        ImageHandler handler = getImageHandlerChain();
-        handler.save(filePath, imageModel);
+        handlerChain.save(filePath, imageModel);
     }
 
-    private ImageHandler getImageHandlerChain() {
-        ImageHandler pbmHandler = new PbmHandler();
-        ImageHandler pgmHandler = new PgmHandler();
-        ImageHandler ppmHandler = new PpmHandler();
+    public void saveImageAs(String filePath, String targetMagicNumber) throws IOException {
+        if (imageModel == null) {
+            throw new IllegalStateException("No image loaded to save.");
+        }
 
-        pbmHandler.setNextHandler(pgmHandler);
-        pgmHandler.setNextHandler(ppmHandler);
+        var converter = converterFactory.getConverter(targetMagicNumber);
+        ImageModel convertedImage = converter.convert(imageModel);
 
-        return pbmHandler; // Start of the chain
+        handlerChain.save(filePath, convertedImage);
     }
 
     public ImageModel getImageModel() {
         return imageModel;
+    }
+
+    public String getCurrentImagePath() {
+        return currentImagePath;
     }
 }
