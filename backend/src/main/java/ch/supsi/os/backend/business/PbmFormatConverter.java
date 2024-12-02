@@ -21,7 +21,7 @@ public class PbmFormatConverter implements FormatConverter {
 
     @Override
     public ImageModel convert(ImageModel sourceImage) {
-        if (sourceImage.getMagicNumber().equals("P1")) {
+        if ("P1".equals(sourceImage.getMagicNumber())) {
             return sourceImage; // Already in PBM format
         }
 
@@ -30,32 +30,20 @@ public class PbmFormatConverter implements FormatConverter {
         int[][] originalPixels = sourceImage.getPixels();
         int[][] convertedPixels = new int[height][width];
 
-        // Debugging the input pixels
-        System.out.println("Original Pixels:");
-        for (int[] row : originalPixels) {
-            for (int pixel : row) {
-                System.out.print(pixel + " ");
-            }
-            System.out.println();
-        }
-
-        if (sourceImage.getMagicNumber().equals("P2") && sourceImage.getChannels() == 1) {
-            // Convert PGM to PBM
+        if ("P2".equals(sourceImage.getMagicNumber()) && sourceImage.getChannels() == 1) {
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
                     int pixelValue = originalPixels[y][x];
                     convertedPixels[y][x] = (pixelValue >= threshold) ? 1 : 0;
                 }
             }
-        } else if (sourceImage.getMagicNumber().equals("P3") && sourceImage.getChannels() == 3) {
-            // Convert PPM to PBM
+        } else if ("P3".equals(sourceImage.getMagicNumber()) && sourceImage.getChannels() == 3) {
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
                     int r = originalPixels[y][x * 3];
                     int g = originalPixels[y][x * 3 + 1];
                     int b = originalPixels[y][x * 3 + 2];
 
-                    // Weighted grayscale conversion
                     int grayscale = (int) Math.round(0.299 * r + 0.587 * g + 0.114 * b);
                     convertedPixels[y][x] = (grayscale >= threshold) ? 1 : 0;
                 }
@@ -66,4 +54,5 @@ public class PbmFormatConverter implements FormatConverter {
 
         return new ImageModel("P1", width, height, convertedPixels, 1); // PBM has 1 channel
     }
+
 }

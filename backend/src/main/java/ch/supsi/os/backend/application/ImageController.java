@@ -66,11 +66,9 @@ public class ImageController {
             throw new IllegalStateException("No image loaded to save.");
         }
 
-        // Use the FormatConverterFactory to get the appropriate converter
         var converter = converterFactory.getConverter(targetMagicNumber);
         ImageModel convertedImage = converter.convert(imageModel);
 
-        // Save the converted image
         handlerChain.save(filePath, convertedImage);
     }
 
