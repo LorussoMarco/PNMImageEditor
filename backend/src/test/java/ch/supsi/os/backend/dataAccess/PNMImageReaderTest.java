@@ -83,8 +83,11 @@ public class PNMImageReaderTest {
         Files.write(tempFile.toPath(), testUnsupportedFileContent.getBytes());
         tempFile.deleteOnExit();
 
-        assertThrows(IllegalArgumentException.class, () -> {
+        IOException exception = assertThrows(IOException.class, () -> {
             imageController.loadImageFromFile(tempFile.getAbsolutePath());
-        }, "Should throw IllegalArgumentException for unsupported format P4");
+        }, "Should throw IOException for unsupported format P4");
+
+        assertTrue(exception.getCause() instanceof IllegalArgumentException,
+                "The cause of IOException should be IllegalArgumentException for unsupported format");
     }
 }
