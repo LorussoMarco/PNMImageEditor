@@ -4,6 +4,7 @@ import ch.supsi.os.backend.application.ImageController;
 import ch.supsi.os.backend.business.ImageModel;
 import ch.supsi.os.frontend.view.ImageViewFxml;
 import ch.supsi.os.frontend.view.LogBarViewFxml;
+import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -33,32 +34,43 @@ public class ImageEventHandler implements EventHandler {
     }
 
     public void handleOpenMenuItem() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle(LocalizationController.getInstance().getLocalizedText("menu.file.open"));
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PNM files", "*.pbm", "*.pgm", "*.ppm"));
+        Platform.runLater(() -> {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle(LocalizationController.getInstance().getLocalizedText("menu.file.open"));
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PNM files", "*.pbm", "*.pgm", "*.ppm"));
 
-        File selectedFile = fileChooser.showOpenDialog(primaryStage);
-        if (selectedFile != null) {
-            try {
-                System.out.println("File selected: " + selectedFile.getAbsolutePath());
-                ImageController.getInstance().loadImageFromFile(selectedFile.getAbsolutePath());
-                ImageModel imageModel = ImageController.getInstance().getImageModel();
-                ImageViewFxml.getInstance().drawImage(imageModel);
-                LogBarViewFxml.getInstance().addLogEntry(
-                        LocalizationController.getInstance().getLocalizedText("log.image.opened")
-                                .replace("{file}", selectedFile.getAbsolutePath())
-                );
-                notifyImageLoadedListeners();
-            } catch (IOException e) {
-                if (e.getMessage().contains("Unsupported image format")) {
-                    showAlert("error.title", "error.header", "error.unsupportedFormat", selectedFile.getAbsolutePath());
-                } else if (e.getMessage().contains("Error reading file")) {
-                    showAlert("error.title", "error.header", "error.readFile", selectedFile.getAbsolutePath());
-                } else {
-                    showAlert("error.title", "error.header", "error.unexpected", selectedFile.getAbsolutePath());
-                }            }
+            File selectedFile = fileChooser.showOpenDialog(primaryStage);
+            if (selectedFile != null) {
+                try {
+                    System.out.println("File selected: " + selectedFile.getAbsolutePath());
+                    ImageController.getInstance().loadImageFromFile(selectedFile.getAbsolutePath());
+                    ImageModel imageModel = ImageController.getInstance().getImageModel();
+                    ImageViewFxml.getInstance().drawImage(imageModel);
+                    LogBarViewFxml.getInstance().addLogEntry(
+                            LocalizationController.getInstance().getLocalizedText("log.image.opened")
+                                    .replace("{file}", selectedFile.getAbsolutePath())
+                    );
+                    notifyImageLoadedListeners();
+                } catch (IOException e) {
+                    handleFileError(e, selectedFile.getAbsolutePath());
+                }
+            }
+        });
+    }
+
+    /**
+     * Gestisce gli errori durante l'apertura del file.
+     */
+    private void handleFileError(IOException e, String filePath) {
+        if (e.getMessage().contains("Unsupported image format")) {
+            showAlert("error.title", "error.header", "error.unsupportedFormat", filePath);
+        } else if (e.getMessage().contains("Error reading file")) {
+            showAlert("error.title", "error.header", "error.readFile", filePath);
+        } else {
+            showAlert("error.title", "error.header", "error.unexpected", filePath);
         }
     }
+
 
     private void showAlert(String keyTitle, String keyHeader, String keyContent, String... contentParams) {
         LocalizationController localizationController = LocalizationController.getInstance();
