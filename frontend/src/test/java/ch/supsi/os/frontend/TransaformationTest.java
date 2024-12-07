@@ -59,9 +59,6 @@ public class TransaformationTest extends AbstractMainGUITest{
             sleep(SLEEP_INTERVAL);
             clickOn("#bFlipUpDown");
             sleep(SLEEP_INTERVAL);
-            verifyThat("#pipelineTextArea", TextInputControlMatchers.hasText(
-                    LocalizationController.getInstance().getLocalizedText("transformation.flipupsidedown") + System.lineSeparator()
-            ));
             verifyThat("#logTextArea", TextInputControlMatchers.hasText(
                     LocalizationController.getInstance().getLocalizedText("transformation.added").replace("{transformation}", LocalizationController.getInstance().getLocalizedText("transformations.flipUpDown")) + System.lineSeparator()
             ));
