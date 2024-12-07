@@ -10,6 +10,9 @@ public abstract class AbstractMainGUITest extends ApplicationTest {
     protected static final int SLEEP_INTERVAL = 1111;
     protected static final Logger LOGGER = Logger.getAnonymousLogger();
     protected int stepNo;
+    protected static Stage primaryStage;
+
+
 
     @BeforeAll
     public static void setupSpec(){
@@ -32,8 +35,10 @@ public abstract class AbstractMainGUITest extends ApplicationTest {
 
     @Override
     public void start(final Stage stage) throws Exception {
+        primaryStage = stage;
         final MainFx mainFx = new MainFx();
-        mainFx.start(stage);
         stage.toFront();
+        mainFx.start(stage);
+
     }
 }

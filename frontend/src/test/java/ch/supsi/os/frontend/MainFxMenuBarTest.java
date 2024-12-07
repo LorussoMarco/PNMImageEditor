@@ -1,115 +1,103 @@
 package ch.supsi.os.frontend;
 
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
+import ch.supsi.os.frontend.controller.ImageEventHandler;
+import ch.supsi.os.frontend.controller.LocalizationController;
+import com.sun.javafx.scene.control.ContextMenuContent;
 import javafx.scene.control.MenuItem;
+import javafx.stage.FileChooser;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.hamcrest.Matchers.notNullValue;
+import org.mockito.Mockito;
+import org.testfx.matcher.base.NodeMatchers;
+import org.testfx.matcher.control.TextInputControlMatchers;
+
+import java.io.File;
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
+import java.util.Objects;
+
+import static org.mockito.Mockito.when;
 import static org.testfx.api.FxAssert.verifyThat;
-import static org.testfx.matcher.control.LabeledMatchers.hasText;
+import static org.testfx.matcher.base.NodeMatchers.isVisible;
 
 
 public class MainFxMenuBarTest extends AbstractMainGUITest {
 
     @Test
-    void testMenuBarIsLoaded() {
-        step("Verifica che la MenuBar sia caricata", () -> {
-            MenuBar menuBar = lookup("#menuBar").queryAs(MenuBar.class);
-            verifyThat(menuBar, notNullValue());
+    public void walkThrough() {
+        testFileMenu();
+        testEditMenu();
+        testHelpMenu();
+    }
+
+    private void testFileMenu() {
+        step("file menu", () -> {
+            // open menu
+            sleep(SLEEP_INTERVAL);
+            clickOn("#menuFile");
+            sleep(SLEEP_INTERVAL);
+
+            MenuItem menuItemOpen = lookup("#menuItemOpen").queryAs(ContextMenuContent.MenuItemContainer.class).getItem();
+            Assertions.assertTrue(menuItemOpen.isVisible());
+            Assertions.assertFalse(menuItemOpen.isDisable());
+
+            MenuItem menuItemSave = lookup("#menuItemSave").queryAs(ContextMenuContent.MenuItemContainer.class).getItem();
+            Assertions.assertTrue(menuItemSave.isVisible());
+            Assertions.assertFalse(menuItemSave.isDisable());
+
+            MenuItem menuItemSaveAs = lookup("#menuItemSaveAs").queryAs(ContextMenuContent.MenuItemContainer.class).getItem();
+            Assertions.assertTrue(menuItemSaveAs.isVisible());
+            Assertions.assertFalse(menuItemSaveAs.isDisable());
+
+            // close menu
+            sleep(SLEEP_INTERVAL);
+            clickOn("#menuFile");
         });
     }
 
-    @Test
-    void testMenuTexts() {
-        step("Verifica i testi dei menu principali", () -> {
-            verifyThat("#menuFile", hasText("File"));
-            verifyThat("#menuEdit", hasText("Edit"));
-            verifyThat("#menuHelp", hasText("Help"));
+
+    private void testEditMenu() {
+        step("edit menu", () -> {
+            // open menu
+            sleep(SLEEP_INTERVAL);
+            clickOn("#menuEdit");
+            sleep(SLEEP_INTERVAL);
+
+            MenuItem menuItemPreferences = lookup("#menuItemPreferences").queryAs(ContextMenuContent.MenuItemContainer.class).getItem();
+            Assertions.assertTrue(menuItemPreferences.isVisible());
+            Assertions.assertFalse(menuItemPreferences.isDisable());
+
+            clickOn("#menuItemPreferences");
+
+            verifyThat("#preferencesGridPane", NodeMatchers.isVisible());
+
+            sleep(SLEEP_INTERVAL);
+
+            clickOn("#preferencesSaveButton");
+
         });
     }
 
-    @Test
-    void testMenuItemOpenAction() {
-        step("Simula clic su 'Open' e verifica il comportamento", () -> {
-            MenuBar menuBar = (MenuBar) lookup("#menuBar").query();
-            assertNotNull(menuBar, "MenuBar non trovato!");
+    private void testHelpMenu() {
+        step("help menu", () -> {
+            // open menu
+            sleep(SLEEP_INTERVAL);
+            clickOn("#menuHelp");
+            sleep(SLEEP_INTERVAL);
 
-            Menu menuFile = menuBar.getMenus().stream()
-                    .filter(menu -> "File".equals(menu.getText()))
-                    .findFirst()
-                    .orElseThrow(() -> new AssertionError("Menu 'File' non trovato!"));
+            MenuItem menuItemAbout = lookup("#menuItemAbout").queryAs(ContextMenuContent.MenuItemContainer.class).getItem();
+            Assertions.assertTrue(menuItemAbout.isVisible());
+            Assertions.assertFalse(menuItemAbout.isDisable());
 
-            MenuItem menuItemOpen = menuFile.getItems().stream()
-                    .filter(item -> "Open".equals(item.getText()))
-                    .findFirst()
-                    .orElseThrow(() -> new AssertionError("MenuItem 'Open' non trovato!"));
-
-            menuItemOpen.fire();
-            System.out.println("Azione 'Open' eseguita con successo.");
+            sleep(SLEEP_INTERVAL);
+            clickOn("#menuItemAbout");
+            sleep(SLEEP_INTERVAL);
+            verifyThat("#aboutBox", NodeMatchers.isVisible());
+            clickOn("#closeButton");
         });
     }
 
-    @Test
-    void testMenuItemSaveAsAction() {
-        step("Simula clic su 'Save As' e verifica il comportamento", () -> {
-            MenuBar menuBar = (MenuBar) lookup("#menuBar").query();
-            assertNotNull(menuBar, "MenuBar non trovato!");
 
-            Menu menuFile = menuBar.getMenus().stream()
-                    .filter(menu -> "File".equals(menu.getText()))
-                    .findFirst()
-                    .orElseThrow(() -> new AssertionError("Menu 'File' non trovato!"));
-
-            MenuItem menuItemSaveAs = menuFile.getItems().stream()
-                    .filter(item -> "Save As".equals(item.getText()))
-                    .findFirst()
-                    .orElseThrow(() -> new AssertionError("MenuItem 'Save As' non trovato!"));
-
-            menuItemSaveAs.fire();
-            System.out.println("Azione 'Save As' eseguita con successo.");
-        });
-    }
-
-    @Test
-    void testMenuItemPreferencesAction() {
-        step("Simula clic su 'Preferences' e verifica il comportamento", () -> {
-            MenuBar menuBar = (MenuBar) lookup("#menuBar").query();
-            assertNotNull(menuBar, "MenuBar non trovato!");
-
-            Menu menuEdit = menuBar.getMenus().stream()
-                    .filter(menu -> "Edit".equals(menu.getText()))
-                    .findFirst()
-                    .orElseThrow(() -> new AssertionError("Menu 'Edit' non trovato!"));
-
-            MenuItem menuItemPreferences = menuEdit.getItems().stream()
-                    .filter(item -> "Preferences".equals(item.getText()))
-                    .findFirst()
-                    .orElseThrow(() -> new AssertionError("MenuItem 'Preferences' non trovato!"));
-
-            menuItemPreferences.fire();
-            System.out.println("Azione 'Preferences' eseguita con successo.");
-        });
-    }
-
-    @Test
-    void testMenuItemAboutAction() {
-        step("Simula clic su 'About' e verifica il comportamento", () -> {
-            MenuBar menuBar = (MenuBar) lookup("#menuBar").query();
-            assertNotNull(menuBar, "MenuBar non trovato!");
-
-            Menu menuHelp = menuBar.getMenus().stream()
-                    .filter(menu -> "Help".equals(menu.getText()))
-                    .findFirst()
-                    .orElseThrow(() -> new AssertionError("Menu 'Help' non trovato!"));
-
-            MenuItem menuItemAbout = menuHelp.getItems().stream()
-                    .filter(item -> "About".equals(item.getText()))
-                    .findFirst()
-                    .orElseThrow(() -> new AssertionError("MenuItem 'About' non trovato!"));
-
-            menuItemAbout.fire();
-            System.out.println("Azione 'About' eseguita con successo.");
-        });
-    }
 }
+

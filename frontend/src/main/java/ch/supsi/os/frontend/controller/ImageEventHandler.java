@@ -13,12 +13,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ImageEventHandler implements EventHandler {
 
     private Stage primaryStage;
-    private final List<Runnable> onImageLoadedListeners = new ArrayList<>();
-
+    private static final List<Runnable> onImageLoadedListeners = new ArrayList<>();
     public ImageEventHandler(Stage primaryStage) {
         this.primaryStage = primaryStage;
     }
@@ -27,17 +27,19 @@ public class ImageEventHandler implements EventHandler {
         onImageLoadedListeners.add(listener);
     }
 
-    private void notifyImageLoadedListeners() {
+    public static void notifyImageLoadedListeners() {
         for (Runnable listener : onImageLoadedListeners) {
             listener.run();
         }
     }
+
 
     public void handleOpenMenuItem() {
         Platform.runLater(() -> {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle(LocalizationController.getInstance().getLocalizedText("menu.file.open"));
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PNM files", "*.pbm", "*.pgm", "*.ppm"));
+
 
             File selectedFile = fileChooser.showOpenDialog(primaryStage);
             if (selectedFile != null) {
@@ -108,33 +110,36 @@ public class ImageEventHandler implements EventHandler {
     }
 
     public void handleSaveAsMenuItem() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Save Image As");
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("PNM files (*.pbm)", "*.pbm"),
-                new FileChooser.ExtensionFilter("PNM files (*.pgm)", "*.pgm"),
-                new FileChooser.ExtensionFilter("PNM files (*.ppm)", "*.ppm")
-        );
+        Platform.runLater(() -> {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Save Image As");
+            fileChooser.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter("PNM files (*.pbm)", "*.pbm"),
+                    new FileChooser.ExtensionFilter("PNM files (*.pgm)", "*.pgm"),
+                    new FileChooser.ExtensionFilter("PNM files (*.ppm)", "*.ppm")
+            );
 
-        File selectedFile = fileChooser.showSaveDialog(primaryStage);
-        if (selectedFile != null) {
-            String extension = getFileExtension(selectedFile.getName());
-            String magicNumber = mapExtensionToMagicNumber(extension);
+            File selectedFile = fileChooser.showSaveDialog(primaryStage);
+            if (selectedFile != null) {
+                String extension = getFileExtension(selectedFile.getName());
+                String magicNumber = mapExtensionToMagicNumber(extension);
 
-            if (magicNumber == null) {
-                LogBarViewFxml.getInstance().addLogEntry("Unsupported file extension: " + extension);
-                return;
+                if (magicNumber == null) {
+                    LogBarViewFxml.getInstance().addLogEntry("Unsupported file extension: " + extension);
+                    return;
+                }
+
+                try {
+                    ImageController.getInstance().saveImageAs(selectedFile.getAbsolutePath(), magicNumber);
+                    LogBarViewFxml.getInstance().addLogEntry("Image saved as: " + selectedFile.getAbsolutePath());
+                } catch (IOException e) {
+                    LogBarViewFxml.getInstance().addLogEntry("Error saving image as: " + e.getMessage());
+                    e.printStackTrace();
+                }
             }
-
-            try {
-                ImageController.getInstance().saveImageAs(selectedFile.getAbsolutePath(), magicNumber);
-                LogBarViewFxml.getInstance().addLogEntry("Image saved as: " + selectedFile.getAbsolutePath());
-            } catch (IOException e) {
-                LogBarViewFxml.getInstance().addLogEntry("Error saving image as: " + e.getMessage());
-                e.printStackTrace();
-            }
-        }
+        });
     }
+
 
     private String getFileExtension(String fileName) {
         int lastDot = fileName.lastIndexOf('.');

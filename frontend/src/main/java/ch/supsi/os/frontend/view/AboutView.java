@@ -1,6 +1,7 @@
 package ch.supsi.os.frontend.view;
 
 import ch.supsi.os.frontend.controller.LocalizationController;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -65,25 +66,27 @@ public class AboutView {
     }
 
     public void showAboutDialog() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/about.fxml"));
-            loader.setController(this);
-            VBox aboutBox = loader.load();
+        Platform.runLater(() -> {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/about.fxml"));
+                loader.setController(this);
+                VBox aboutBox = loader.load();
 
-            Stage aboutStage = new Stage();
-            aboutStage.initModality(Modality.APPLICATION_MODAL);
-            aboutStage.setTitle(LocalizationController.getInstance().getLocalizedText("about.title"));
+                Stage aboutStage = new Stage();
+                aboutStage.initModality(Modality.APPLICATION_MODAL);
+                aboutStage.setTitle(LocalizationController.getInstance().getLocalizedText("about.title"));
 
-            Scene scene = new Scene(aboutBox);
-            aboutStage.setScene(scene);
+                Scene scene = new Scene(aboutBox);
+                aboutStage.setScene(scene);
 
-            closeButton.setOnAction(e -> aboutStage.close());
-            update(); // Update UI with localized content
-            aboutStage.showAndWait();
+                closeButton.setOnAction(e -> aboutStage.close());
+                update(); // Update UI with localized content
+                aboutStage.showAndWait();
 
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to load About dialog", e);
-        }
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to load About dialog", e);
+            }
+        });
     }
 
 
