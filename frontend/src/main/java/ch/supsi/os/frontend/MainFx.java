@@ -7,6 +7,8 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import javafx.scene.control.MenuItem;
+
 
 public class MainFx extends Application {
     private final ControlledFxView menuBarView;
@@ -59,6 +61,7 @@ public class MainFx extends Application {
         stage.toFront();
         stage.setScene(scene);
         stage.show();
+
 
         LogBarViewFxml.getInstance().addLogEntry(localizationController.getLocalizedText("app.start.log"));
     }

@@ -1,6 +1,7 @@
 package ch.supsi.os.frontend.view;
 
 import ch.supsi.os.frontend.controller.LocalizationController;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -21,39 +22,43 @@ public class PreferencesView {
     private static final Path PREFS_FILE_PATH = Paths.get(System.getProperty("user.home"), PREFS_FILE_NAME);
 
     public static void showPreferencesDialog() {
-        Stage dialog = new Stage();
-        dialog.setTitle(LocalizationController.getInstance().getLocalizedText("preferences.title"));
-        dialog.initModality(Modality.APPLICATION_MODAL);
+        Platform.runLater(() -> {
+            Stage dialog = new Stage();
+            dialog.setTitle(LocalizationController.getInstance().getLocalizedText("preferences.title"));
+            dialog.initModality(Modality.APPLICATION_MODAL);
 
-        ComboBox<String> languageComboBox = new ComboBox<>();
-        List<String> languages = LocalizationController.getInstance().getAvailableLanguages();
-        languageComboBox.getItems().addAll(languages);
 
-        // Set the default language
-        String currentLanguage = loadPreference("language", "en");
-        languageComboBox.setValue(currentLanguage);
+            ComboBox<String> languageComboBox = new ComboBox<>();
+            List<String> languages = LocalizationController.getInstance().getAvailableLanguages();
+            languageComboBox.getItems().addAll(languages);
+            // Set the default language
+            String currentLanguage = loadPreference("language", "en");
+            languageComboBox.setValue(currentLanguage);
 
-        GridPane gridPane = new GridPane();
-        gridPane.setPadding(new Insets(10));
-        gridPane.setVgap(10);
-        gridPane.setHgap(10);
+            GridPane gridPane = new GridPane();
+            gridPane.setPadding(new Insets(10));
+            gridPane.setVgap(10);
+            gridPane.setHgap(10);
 
-        gridPane.add(new Label(LocalizationController.getInstance().getLocalizedText("preferences.select.language")), 0, 0);
-        gridPane.add(languageComboBox, 1, 0);
+            gridPane.add(new Label(LocalizationController.getInstance().getLocalizedText("preferences.select.language")), 0, 0);
+            gridPane.add(languageComboBox, 1, 0);
+            gridPane.setId("preferencesGridPane");
 
-        Button saveButton = new Button(LocalizationController.getInstance().getLocalizedText("preferences.save"));
-        saveButton.setOnAction(e -> {
-            String selectedLanguage = languageComboBox.getValue();
-            PreferencesView.savePreferences(selectedLanguage);
-            LocalizationController.getInstance().setLocale(Locale.forLanguageTag(selectedLanguage));
-            dialog.close();
+            Button saveButton = new Button(LocalizationController.getInstance().getLocalizedText("preferences.save"));
+            saveButton.setOnAction(e -> {
+                String selectedLanguage = languageComboBox.getValue();
+                PreferencesView.savePreferences(selectedLanguage);
+                LocalizationController.getInstance().setLocale(Locale.forLanguageTag(selectedLanguage));
+                dialog.close();
+            });
+            saveButton.setId("preferencesSaveButton");
+
+            gridPane.add(saveButton, 0, 1, 2, 1);
+
+            Scene dialogScene = new Scene(gridPane, 300, 150);
+            dialog.setScene(dialogScene);
+            dialog.showAndWait();
         });
-
-        gridPane.add(saveButton, 0, 1, 2, 1);
-
-        Scene dialogScene = new Scene(gridPane, 300, 150);
-        dialog.setScene(dialogScene);
-        dialog.showAndWait();
     }
 
     public static void savePreferences(String language) {
