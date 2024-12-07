@@ -153,10 +153,6 @@ public class TransaformationTest extends AbstractMainGUITest{
             verifyThat("#logTextArea", TextInputControlMatchers.hasText(
                     ""
             ));
-
-
-
-
         });
     }
 }

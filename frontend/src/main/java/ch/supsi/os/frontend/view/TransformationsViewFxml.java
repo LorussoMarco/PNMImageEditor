@@ -2,10 +2,7 @@ package ch.supsi.os.frontend.view;
 
 import ch.supsi.os.backend.application.ImageController;
 import ch.supsi.os.backend.business.*;
-import ch.supsi.os.frontend.controller.EventHandler;
-import ch.supsi.os.frontend.controller.ImageEventHandler;
-import ch.supsi.os.frontend.controller.LocalizationController;
-import ch.supsi.os.frontend.controller.TransformationPipelineController;
+import ch.supsi.os.frontend.controller.*;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -120,5 +117,6 @@ public class TransformationsViewFxml implements ControlledFxView {
                 .replace("{transformation}", transformationName);
 
         LogBarViewFxml.getInstance().addLogEntry(logMessage);
+        StateController.getInstance().setUnsavedChanges(true);
     }
 }

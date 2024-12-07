@@ -6,6 +6,7 @@
         <MenuItem fx:id="menuItemOpen"/>
         <MenuItem fx:id="menuItemSave"/>
         <MenuItem fx:id="menuItemSaveAs"/>
+        <MenuItem fx:id="menuItemQuit"/>
     </Menu>
     <Menu fx:id="menuEdit">
         <MenuItem fx:id="menuItemPreferences"/>

@@ -1,14 +1,15 @@
 package ch.supsi.os.frontend.view;
 
+import ch.supsi.os.backend.application.ImageController;
 import ch.supsi.os.frontend.controller.EventHandler;
 import ch.supsi.os.frontend.controller.ImageEventHandler;
 import ch.supsi.os.frontend.controller.LocalizationController;
+import ch.supsi.os.frontend.controller.StateController;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
 
 import java.io.IOException;
 
@@ -29,6 +30,8 @@ public class MenuBarViewFxml implements ControlledFxView {
 
     @FXML
     private MenuItem menuItemSaveAs;
+    @FXML
+    private MenuItem menuItemQuit;
 
     @FXML
     private Menu menuEdit;
@@ -73,6 +76,7 @@ public class MenuBarViewFxml implements ControlledFxView {
         menuItemPreferences.setText(localizationController.getLocalizedText("menu.edit.preferences"));
         menuHelp.setText(localizationController.getLocalizedText("menu.help"));
         menuItemAbout.setText(localizationController.getLocalizedText("menu.help.about"));
+        menuItemQuit.setText(localizationController.getLocalizedText("menu.file.quit"));
     }
 
 
@@ -85,5 +89,45 @@ public class MenuBarViewFxml implements ControlledFxView {
         menuItemSaveAs.setOnAction(e -> handler.handleSaveAsMenuItem());
         menuItemAbout.setOnAction(e -> AboutView.getInstance().showAboutDialog());
         menuItemPreferences.setOnAction(e -> PreferencesView.showPreferencesDialog());
+        menuItemQuit.setOnAction(event -> handleQuitMenuItem());
+
+    }
+
+    private void handleQuitMenuItem() {
+        StateController stateController = StateController.getInstance();
+        LocalizationController localizationController = LocalizationController.getInstance();
+
+        if (stateController.hasUnsavedChanges()) {
+            Alert unsavedAlert = new Alert(Alert.AlertType.CONFIRMATION);
+            unsavedAlert.setTitle(localizationController.getLocalizedText("quit.unsaved.title"));
+            unsavedAlert.setHeaderText(localizationController.getLocalizedText("quit.unsaved.header"));
+            unsavedAlert.setContentText(localizationController.getLocalizedText("quit.unsaved.content"));
+
+            ButtonType saveButton = new ButtonType(localizationController.getLocalizedText("quit.unsaved.save"));
+            ButtonType quitButton = new ButtonType(localizationController.getLocalizedText("quit.unsaved.quit"));
+            ButtonType cancelButton = new ButtonType(localizationController.getLocalizedText("quit.unsaved.cancel"), ButtonBar.ButtonData.CANCEL_CLOSE);
+
+            unsavedAlert.getButtonTypes().setAll(saveButton, quitButton, cancelButton);
+
+            unsavedAlert.showAndWait().ifPresent(result -> {
+                if (result == saveButton) {
+                    try {
+                        saveAllChanges();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    Platform.exit();
+                } else if (result == quitButton) {
+                    Platform.exit();
+                }
+            });
+        } else {
+            Platform.exit();
+        }
+    }
+
+    private void saveAllChanges() throws IOException {
+        ImageController.getInstance().saveImageToFile(ImageController.getInstance().getCurrentImagePath());
+        StateController.getInstance().setUnsavedChanges(false);
     }
 }

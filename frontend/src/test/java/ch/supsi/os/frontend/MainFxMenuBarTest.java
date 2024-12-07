@@ -50,6 +50,10 @@ public class MainFxMenuBarTest extends AbstractMainGUITest {
             Assertions.assertTrue(menuItemSaveAs.isVisible());
             Assertions.assertFalse(menuItemSaveAs.isDisable());
 
+            MenuItem menuItemQuit = lookup("#menuItemQuit").queryAs(ContextMenuContent.MenuItemContainer.class).getItem();
+            Assertions.assertTrue(menuItemQuit.isVisible());
+            Assertions.assertFalse(menuItemQuit.isDisable());
+
             // close menu
             sleep(SLEEP_INTERVAL);
             clickOn("#menuFile");
