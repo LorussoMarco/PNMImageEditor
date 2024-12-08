@@ -66,10 +66,8 @@ public class PipelineBarViewFxml implements ControlledFxView {
         ImageController imageController = ImageController.getInstance();
         ImageViewFxml imageViewFxml = ImageViewFxml.getInstance();
 
-        // Disabilita i bottoni all'avvio
         setButtonsDisabled(true);
 
-        // Aggiungi listener per abilitare i bottoni al caricamento dell'immagine
         if (eventHandler instanceof ImageEventHandler) {
             ((ImageEventHandler) eventHandler).addOnImageLoadedListener(() -> setButtonsDisabled(false));
         }

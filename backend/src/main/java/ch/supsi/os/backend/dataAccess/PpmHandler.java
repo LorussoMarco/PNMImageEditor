@@ -43,7 +43,6 @@ public class PpmHandler extends AbstractImageHandler {
                 String[] pixelValues = line.trim().split("\\s+");
                 for (int colIndex = 0; colIndex < width * 3 && colIndex < pixelValues.length; colIndex++) {
                     int colorValue = Integer.parseInt(pixelValues[colIndex]);
-                    // Normalize to 0-255 range
                     pixels[rowIndex][colIndex] = (colorValue * 255) / maxColorValue;
                 }
                 rowIndex++;

@@ -22,7 +22,6 @@ class PpmHandlerTest {
         ppmHandler = new PpmHandler();
         imageModel = new ImageModel();
 
-        // Create a temporary test PPM file
         tempFile = File.createTempFile("test", ".ppm");
         try (FileWriter writer = new FileWriter(tempFile)) {
             writer.write("P3\n");
@@ -36,7 +35,7 @@ class PpmHandlerTest {
 
     @AfterEach
     public void tearDown() {
-        tempFile.delete(); // Delete the temporary file after each test
+        tempFile.delete();
     }
 
     @Test
@@ -63,7 +62,6 @@ class PpmHandlerTest {
 
     @Test
     public void testSave() throws IOException {
-        // Set up the image model for saving
         imageModel.setMagicNumber("P3");
         imageModel.setWidth(3);
         imageModel.setHeight(2);
@@ -74,14 +72,11 @@ class PpmHandlerTest {
         };
         imageModel.setPixels(pixels);
 
-        // Create a temporary file to save the PPM data
         File saveFile = File.createTempFile("test_save", ".ppm");
         saveFile.deleteOnExit();
 
-        // Save the image model using the handler
         ppmHandler.save(saveFile.getAbsolutePath(), imageModel);
 
-        // Verify the saved file content
         List<String> lines = Files.readAllLines(saveFile.toPath());
 
         assertEquals("P3", lines.get(0).trim(), "Magic number mismatch");

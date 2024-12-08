@@ -60,19 +60,19 @@ public class ImageViewFxml implements ControlledFxView {
         }
 
         int[][] pixels = imageModel.getPixels();
-        int channels = imageModel.getChannels(); // Check for grayscale or RGB
+        int channels = imageModel.getChannels();
         WritableImage writableImage = new WritableImage(width, height);
 
         PixelWriter pixelWriter = writableImage.getPixelWriter();
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                if (channels == 3) { // RGB Image
+                if (channels == 3) {
                     int r = pixels[y][x * 3];
                     int g = pixels[y][x * 3 + 1];
                     int b = pixels[y][x * 3 + 2];
-                    Color color = Color.rgb(clamp(r), clamp(g), clamp(b)); // Use Color.rgb
+                    Color color = Color.rgb(clamp(r), clamp(g), clamp(b));
                     pixelWriter.setColor(x, y, color);
-                } else if (channels == 1) { // Grayscale Image
+                } else if (channels == 1) {
                     int gray = pixels[y][x];
                     Color color = Color.grayRgb(clamp(gray));
                     pixelWriter.setColor(x, y, color);
@@ -85,7 +85,6 @@ public class ImageViewFxml implements ControlledFxView {
         return writableImage;
     }
 
-    // Utility method to clamp values between 0-255
     private int clamp(int value) {
         return Math.max(0, Math.min(255, value));
     }

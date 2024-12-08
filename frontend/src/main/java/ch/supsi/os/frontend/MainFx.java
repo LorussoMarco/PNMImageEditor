@@ -27,7 +27,6 @@ public class MainFx extends Application {
 
     @Override
     public void start(Stage stage){
-        // Initialize localization
         LocalizationController localizationController = LocalizationController.getInstance();
 
         localizationController.initializeLocale();

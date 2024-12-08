@@ -33,7 +33,7 @@ public class LogBarViewFxml implements ControlledFxView {
                 FXMLLoader loader = new FXMLLoader(LogBarViewFxml.class.getResource("/logbar.fxml"));
                 loader.setController(myself);
                 loader.load();
-                initialized = true; // Imposta il flag a true
+                initialized = true;
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

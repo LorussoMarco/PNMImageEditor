@@ -62,19 +62,17 @@ public class PbmHandler extends AbstractImageHandler {
         }
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-            // Write magic number and dimensions
             writer.write("P1");
             writer.newLine();
             writer.write(imageModel.getWidth() + " " + imageModel.getHeight());
             writer.newLine();
 
-            // Write pixel data row by row
             int[][] pixels = imageModel.getPixels();
             for (int[] row : pixels) {
                 for (int pixel : row) {
-                    writer.write(pixel + " "); // Write pixel with a space
+                    writer.write(pixel + " ");
                 }
-                writer.newLine(); // End of row
+                writer.newLine();
             }
 
             // Ensure buffer is flushed

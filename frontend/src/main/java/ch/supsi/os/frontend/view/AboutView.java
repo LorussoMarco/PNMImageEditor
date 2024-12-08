@@ -45,7 +45,6 @@ public class AboutView {
             loader.setController(this);
             loader.load();
 
-            // Load properties from application.properties
             try (InputStream input = getClass().getResourceAsStream("/application.properties")) {
                 if (input != null) {
                     properties.load(input);
@@ -80,7 +79,7 @@ public class AboutView {
                 aboutStage.setScene(scene);
 
                 closeButton.setOnAction(e -> aboutStage.close());
-                update(); // Update UI with localized content
+                update();
                 aboutStage.showAndWait();
 
             } catch (IOException e) {

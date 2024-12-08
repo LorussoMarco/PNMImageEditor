@@ -15,14 +15,12 @@ public class TransformationPipelineController {
     private final List<ImageTransformationStrategy> transformationPipeline;
     private final LocalizationController localizationController;
 
-    // Mappa per associare le classi di trasformazioni alle chiavi di localizzazione
     private final Map<Class<? extends ImageTransformationStrategy>, String> transformationKeys;
 
     private TransformationPipelineController() {
         transformationPipeline = new ArrayList<>();
         localizationController = LocalizationController.getInstance();
 
-        // Popola la mappa delle trasformazioni
         transformationKeys = new HashMap<>();
         transformationKeys.put(FlipUpsideDownTransformation.class, "transformation.flipupsidedown");
         transformationKeys.put(FlipSideToSideTransformation.class, "transformation.flipsidetoside");

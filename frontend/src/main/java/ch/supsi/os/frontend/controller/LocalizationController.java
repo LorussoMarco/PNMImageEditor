@@ -78,7 +78,6 @@ public class LocalizationController {
             view.update();
         }
 
-        // Aggiorna la LogBar solo se JavaFX è inizializzato
         if (LogBarViewFxml.isInitialized()) {
             Platform.runLater(() -> {
                 LogBarViewFxml logBar = LogBarViewFxml.getInstance();

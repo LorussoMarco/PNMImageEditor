@@ -18,18 +18,15 @@ public class Rotate90AntiClockwiseTransformation implements ImageTransformationS
                     int destinationRow = imageModel.getWidth() - 1 - j;
                     int destinationIndex = i * 3;
 
-                    // Copy RGB values to the correct rotated position
                     rotatedPixels[destinationRow][destinationIndex] = pixels[i][sourceIndex];
                     rotatedPixels[destinationRow][destinationIndex + 1] = pixels[i][sourceIndex + 1];
                     rotatedPixels[destinationRow][destinationIndex + 2] = pixels[i][sourceIndex + 2];
                 } else {
-                    // Single channel (grayscale)
                     rotatedPixels[imageModel.getWidth() - 1 - j][i] = pixels[i][j];
                 }
             }
         }
 
-        // Update the image model with new dimensions and rotated pixel array
         imageModel.setWidth(newWidth);
         imageModel.setHeight(newHeight);
         imageModel.setPixels(rotatedPixels);

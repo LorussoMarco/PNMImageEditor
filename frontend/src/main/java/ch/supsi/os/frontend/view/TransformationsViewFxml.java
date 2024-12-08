@@ -38,7 +38,6 @@ public class TransformationsViewFxml implements ControlledFxView {
     private final Map<Class<? extends ImageTransformationStrategy>, String> transformationKeys;
 
     private TransformationsViewFxml() {
-        // Mappatura tra le classi di trasformazione e le chiavi dei file di traduzione
         transformationKeys = new HashMap<>();
         transformationKeys.put(FlipUpsideDownTransformation.class, "transformations.flipUpDown");
         transformationKeys.put(FlipSideToSideTransformation.class, "transformations.flipSide");
@@ -83,10 +82,8 @@ public class TransformationsViewFxml implements ControlledFxView {
         TransformationPipelineController pipelineController = TransformationPipelineController.getInstance();
         PipelineBarViewFxml pipelineView = PipelineBarViewFxml.getInstance();
 
-        // Disabilita i bottoni all'avvio
         setButtonsDisabled(true);
 
-        // Aggiungi listener per abilitare i bottoni al caricamento dell'immagine
         if (eventHandler instanceof ImageEventHandler) {
             ((ImageEventHandler) eventHandler).addOnImageLoadedListener(() -> setButtonsDisabled(false));
         }
@@ -109,6 +106,7 @@ public class TransformationsViewFxml implements ControlledFxView {
     private void addTransformationToPipeline(ImageTransformationStrategy strategy, TransformationPipelineController pipelineController, PipelineBarViewFxml pipelineView) {
         pipelineController.addTransformation(strategy);
         pipelineView.updatePipelineTextArea();
+        StateController.getInstance().setUnsavedChanges(true);
 
         String transformationKey = transformationKeys.getOrDefault(strategy.getClass(), "transformation.unknown");
         String transformationName = LocalizationController.getInstance().getLocalizedText(transformationKey);
@@ -117,6 +115,5 @@ public class TransformationsViewFxml implements ControlledFxView {
                 .replace("{transformation}", transformationName);
 
         LogBarViewFxml.getInstance().addLogEntry(logMessage);
-        StateController.getInstance().setUnsavedChanges(true);
     }
 }

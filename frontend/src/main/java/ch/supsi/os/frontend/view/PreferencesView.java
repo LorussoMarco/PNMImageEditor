@@ -31,7 +31,6 @@ public class PreferencesView {
             ComboBox<String> languageComboBox = new ComboBox<>();
             List<String> languages = LocalizationController.getInstance().getAvailableLanguages();
             languageComboBox.getItems().addAll(languages);
-            // Set the default language
             String currentLanguage = loadPreference("language", "en");
             languageComboBox.setValue(currentLanguage);
 
