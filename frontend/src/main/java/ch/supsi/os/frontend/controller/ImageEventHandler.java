@@ -18,9 +18,19 @@ import java.util.Objects;
 public class ImageEventHandler implements EventHandler {
 
     private Stage primaryStage;
+    private static ImageEventHandler instance;
+
     private static final List<Runnable> onImageLoadedListeners = new ArrayList<>();
-    public ImageEventHandler(Stage primaryStage) {
-        this.primaryStage = primaryStage;
+    private ImageEventHandler() {}
+    public static ImageEventHandler getInstance() {
+        if (instance == null) {
+            instance = new ImageEventHandler();
+        }
+        return instance;
+    }
+
+    public void setPrimaryStage(Stage stage){
+        this.primaryStage = stage;
     }
 
     public void addOnImageLoadedListener(Runnable listener) {
@@ -32,7 +42,6 @@ public class ImageEventHandler implements EventHandler {
             listener.run();
         }
     }
-
 
     public void handleOpenMenuItem() {
         Platform.runLater(() -> {
@@ -60,9 +69,6 @@ public class ImageEventHandler implements EventHandler {
         });
     }
 
-    /**
-     * Gestisce gli errori durante l'apertura del file.
-     */
     private void handleFileError(IOException e, String filePath) {
         if (e.getMessage().contains("Unsupported image format")) {
             showAlert("error.title", "error.header", "error.unsupportedFormat", filePath);

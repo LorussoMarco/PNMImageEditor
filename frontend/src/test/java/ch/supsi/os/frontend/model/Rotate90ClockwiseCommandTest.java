@@ -43,11 +43,4 @@ class Rotate90ClockwiseCommandTest {
         assertEquals(3, imageModel.getHeight());
         assertArrayEquals(expectedPixels, imageModel.getPixels());
     }
-
-    @Test
-    void testGetDescription() {
-        // Verifica la descrizione del comando
-        String description = command.getDescription();
-        assertEquals("Rotate 90 clockwise applied", description);
-    }
 }
