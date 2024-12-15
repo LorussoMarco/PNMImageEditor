@@ -96,23 +96,36 @@ public class ImageEventHandler implements EventHandler {
         ImageController controller = ImageController.getInstance();
         String currentPath = controller.getCurrentImagePath();
         if (currentPath == null || currentPath.isEmpty()) {
-            LogBarViewFxml.getInstance().addLogEntry("No image path available to overwrite.");
+            LogBarViewFxml.getInstance().addLogEntry(LocalizationController.getInstance().getLocalizedText("log.image.noPath"));
             return;
         }
 
         try {
             controller.saveImageToFile(currentPath);
-            LogBarViewFxml.getInstance().addLogEntry("Image saved: " + currentPath);
+            LogBarViewFxml.getInstance().addLogEntry(
+                    LocalizationController.getInstance().getLocalizedText("log.image.saved")
+                            .replace("{file}", currentPath)
+            );
         } catch (IOException e) {
-            LogBarViewFxml.getInstance().addLogEntry("Error saving image: " + e.getMessage());
+            LogBarViewFxml.getInstance().addLogEntry(
+                    LocalizationController.getInstance().getLocalizedText("log.image.errorSave")
+                            .replace("{error}", e.getMessage())
+            );
             e.printStackTrace();
         }
     }
 
     public void handleSaveAsMenuItem() {
         Platform.runLater(() -> {
+            ImageController controller = ImageController.getInstance();
+            if (controller.getImageModel() == null || controller.getImageModel().getMagicNumber() == null) {
+                LogBarViewFxml.getInstance().addLogEntry(
+                        LocalizationController.getInstance().getLocalizedText("log.image.noImage")
+                );
+                return;
+            }
             FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Save Image As");
+            fileChooser.setTitle(LocalizationController.getInstance().getLocalizedText("menu.file.saveAs"));
             fileChooser.getExtensionFilters().addAll(
                     new FileChooser.ExtensionFilter("PNM files (*.pbm)", "*.pbm"),
                     new FileChooser.ExtensionFilter("PNM files (*.pgm)", "*.pgm"),
@@ -125,15 +138,24 @@ public class ImageEventHandler implements EventHandler {
                 String magicNumber = mapExtensionToMagicNumber(extension);
 
                 if (magicNumber == null) {
-                    LogBarViewFxml.getInstance().addLogEntry("Unsupported file extension: " + extension);
+                    LogBarViewFxml.getInstance().addLogEntry(
+                            LocalizationController.getInstance().getLocalizedText("log.image.unsupportedExtension")
+                                    .replace("{extension}", extension)
+                    );
                     return;
                 }
 
                 try {
                     ImageController.getInstance().saveImageAs(selectedFile.getAbsolutePath(), magicNumber);
-                    LogBarViewFxml.getInstance().addLogEntry("Image saved as: " + selectedFile.getAbsolutePath());
+                    LogBarViewFxml.getInstance().addLogEntry(
+                            LocalizationController.getInstance().getLocalizedText("log.image.savedAs")
+                                    .replace("{file}", selectedFile.getAbsolutePath())
+                    );
                 } catch (IOException e) {
-                    LogBarViewFxml.getInstance().addLogEntry("Error saving image as: " + e.getMessage());
+                    LogBarViewFxml.getInstance().addLogEntry(
+                            LocalizationController.getInstance().getLocalizedText("log.image.errorSave")
+                                    .replace("{error}", e.getMessage())
+                    );
                     e.printStackTrace();
                 }
             }
