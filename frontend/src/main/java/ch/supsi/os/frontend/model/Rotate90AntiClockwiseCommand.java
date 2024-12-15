@@ -16,9 +16,4 @@ public class Rotate90AntiClockwiseCommand implements TransformationCommand{
         transformation.applyTransformation(imageModel);
     }
 
-
-    @Override
-    public String getDescription() {
-        return "Rotate 90 anticlockwise applied";
-    }
 }

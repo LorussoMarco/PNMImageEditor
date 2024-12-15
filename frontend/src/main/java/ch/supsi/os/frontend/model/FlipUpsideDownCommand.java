@@ -15,9 +15,4 @@ public class FlipUpsideDownCommand implements TransformationCommand {
     public void execute(ImageModel imageModel) {
         transformation.applyTransformation(imageModel);
     }
-
-    @Override
-    public String getDescription() {
-        return "Flip upside-down applied";
-    }
 }

@@ -4,5 +4,4 @@ import ch.supsi.os.backend.business.ImageModel;
 
 public interface TransformationCommand {
     void execute(ImageModel imageModel);
-    String getDescription();
 }

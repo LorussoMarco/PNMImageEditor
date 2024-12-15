@@ -15,10 +15,4 @@ public class Rotate90ClockwiseCommand implements TransformationCommand{
     public void execute(ImageModel imageModel) {
         transformation.applyTransformation(imageModel);
     }
-
-
-    @Override
-    public String getDescription() {
-        return "Rotate 90 clockwise applied";
-    }
 }

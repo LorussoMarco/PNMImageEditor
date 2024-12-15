@@ -78,7 +78,6 @@ public class TransformationsViewFxml implements ControlledFxView {
     @Override
     public void initialize(EventHandler eventHandler) {
         update();
-        ImageController imageController = ImageController.getInstance();
         TransformationPipelineController pipelineController = TransformationPipelineController.getInstance();
         PipelineBarViewFxml pipelineView = PipelineBarViewFxml.getInstance();
 

@@ -39,11 +39,4 @@ class FlipSideToSideCommandTest {
         };
         assertArrayEquals(expectedPixels, imageModel.getPixels());
     }
-
-    @Test
-    void testGetDescription() {
-        // Verifica la descrizione del comando
-        String description = command.getDescription();
-        assertEquals("Flip side to side applied", description);
-    }
 }

@@ -1,5 +1,6 @@
 package ch.supsi.os.frontend;
 
+import ch.supsi.os.frontend.controller.EventHandler;
 import ch.supsi.os.frontend.controller.ImageEventHandler;
 import ch.supsi.os.frontend.controller.LocalizationController;
 import ch.supsi.os.frontend.view.*;
@@ -11,6 +12,8 @@ import javafx.scene.control.MenuItem;
 
 
 public class MainFx extends Application {
+    private final ImageEventHandler eventHandler;
+
     private final ControlledFxView menuBarView;
     private final ControlledFxView transformationsView;
     private final ControlledFxView imageView;
@@ -18,6 +21,7 @@ public class MainFx extends Application {
     private final ControlledFxView logbarView;
 
     public MainFx() {
+        this.eventHandler = ImageEventHandler.getInstance();
         this.logbarView = LogBarViewFxml.getInstance();
         this.menuBarView = MenuBarViewFxml.getInstance();
         this.transformationsView = TransformationsViewFxml.getInstance();
@@ -43,7 +47,7 @@ public class MainFx extends Application {
         root.setRight(this.pipelineView.getNode());
         root.setBottom(this.logbarView.getNode());
 
-        ImageEventHandler eventHandler = new ImageEventHandler(stage);
+        eventHandler.setPrimaryStage(stage);
 
         menuBarView.initialize(eventHandler);
         imageView.initialize(eventHandler);

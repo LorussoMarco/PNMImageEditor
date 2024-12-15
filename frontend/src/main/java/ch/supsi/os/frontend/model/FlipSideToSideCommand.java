@@ -16,9 +16,4 @@ public class FlipSideToSideCommand implements TransformationCommand{
     public void execute(ImageModel imageModel) {
         transformation.applyTransformation(imageModel);
     }
-
-    @Override
-    public String getDescription() {
-        return "Flip side to side applied";
-    }
 }
